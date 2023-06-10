@@ -1,0 +1,6 @@
+version: "3.8"
+services:
+  cloudreve:
+    container_name: cloudreve_test
+    image: cloudreve/cloudreve:latest
+    restart: always
