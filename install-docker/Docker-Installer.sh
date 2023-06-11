@@ -29,7 +29,7 @@ export WPI="n"
 SYSTEM="none"
 
 #版权信息
-echo -e "\033[36m自动安装脚本"
+echo -e "\033[36mDocker自动安装脚本"
 echo -e "Author: AptS-1547"
 echo -e "Description: 懒人化自动安装Docker脚本（支持OpencloudOS等官方不支持系统，不支持Fedora） \033[0m"
 #版权信息-结束
