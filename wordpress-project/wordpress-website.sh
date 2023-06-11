@@ -382,20 +382,27 @@ then
 	
 #部署docker-compose.yml-wordpress
 	#下载docker-compose.yml
-	sudo wget -c https://ftp.esaps.top:8080/wordpress/docker-compose.yml -P /var/docker_file/composer_file/wordpress/
-	#下载初始nginx conf文件（包括nginx conf https）
-	sudo wget -c https://ftp.esaps.top:8080/wordpress/wordpress.conf -P /var/docker_file/container/nginx_website/config/
-	sudo wget -c https://ftp.esaps.top:8080/wordpress/wordpress-https.conf.disabled -P /var/docker_file/container/nginx_website/config/
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose.yml -P /var/docker_file/composer_file/wordpress/
+	#下载初始Nginx conf文件（包括nginx conf https）
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress.conf -P /var/docker_file/container/nginx_website/config/
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-https.conf.disabled -P /var/docker_file/container/nginx_website/config/
+	#下载初始SQL文件
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/default-wordpress.sql -P /var/docker_file/container/ #TODO
+	#修改Nginx配置文件
 	echo -e -n "\033[33m请输入你的域名： \033[0m"
 	read -p "" hostname
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress.conf
+	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
+	#修改docker-compose.yml文件
 	echo -e -n "\033[33m请输入即将设置的MariaDB Root（超级管理员）密码：  \033[0m"
 	read -p "" rootpasswd
-	sudo sed -i "s/ROOT_PASSWD/$rootpasswd/" /var/docker_file/container/nginx_website/config/wordpress.conf
+	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/composer_file/wordpress/docker-compose.yml
+	sudo sed -i "s/ROOT_PASSWD/$rootpasswd/" /var/docker_file/composer_file/wordpress/docker-compose.yml
 	sleep 1
 	#下载初始nginx conf文件（包括nginx conf https）-结束
 	echo -e "\033[33m我们正在设置数据库和php库，请等待\033[0m"
 	echo " "
+	#启动Docker Compose部署
 	sudo docker compose -f /var/docker_file/composer_file/wordpress/docker-compose.yml up -d
 
 

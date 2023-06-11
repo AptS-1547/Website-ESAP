@@ -8,7 +8,7 @@ server {
     ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
     ssl_prefer_server_ciphers on;
 
-    access_log  /var/log/nginx/domain_name.https.access.log  main;
+    access_log  /var/log/nginx/domain_name.access.log  main;
 
     location / {
         root /usr/share/nginx/html/wordpress;
