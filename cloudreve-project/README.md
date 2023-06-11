@@ -13,12 +13,12 @@
 
 Github官方源：
 ```shell
-curl -fsSL https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/cloudreve-project/Cloudreve-Installer.sh | bash
+sudo curl -fsSL https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/cloudreve-project/Cloudreve-Installer.sh | bash
 ```
 
 The ESAP Project镜像源：
 ```shell
-curl -fsSL https://ftp.esaps.top:8080/dockersh/cloudreve-project/Cloudreve-Installer.sh | bash
+sudo curl -fsSL https://ftp.esaps.top:8080/dockersh/cloudreve-project/Cloudreve-Installer.sh | bash
 ```   
 
 将此命令复制到Linux Shell中，即可自动安装Cloudreve
