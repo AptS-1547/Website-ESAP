@@ -292,7 +292,7 @@ then
 fi
 #Docker Compose自动安装-结束
 
-#是否启动Wordpress应用部署
+#是否启动Cloudreve应用部署
 sudo docker network ls | grep "wordpress_server_for_public" > /dev/null
 if [ $? -eq 0 ]
 then
@@ -319,9 +319,9 @@ else
 		esac
 	done
 fi
-#是否启动Wordpress应用部署-结束
+#是否启动Cloudreve应用部署-结束
 
-#启动Wordpress应用部署
+#启动Cloudreve应用部署
 if [ $CCWPI = "y" ] && [ $WPI = "n" ]
 then
 	#创建网站项目文件夹
@@ -340,8 +340,6 @@ then
 	sudo mkdir /var/docker_file/container/nginx_website/config/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/container/nginx_website/website_file/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/container/mariadb_website/ > /dev/null 2>&1
-	sudo mkdir /var/docker_file/container/mariadb_website/init.d/ > /dev/null 2>&1
-	sudo mkdir /var/docker_file/container/mariadb_website/init.d/wordpress/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/container/mariadb_website/config/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/container/mariadb_website/database_backup/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/container/php_website/ > /dev/null 2>&1
@@ -349,8 +347,8 @@ then
 	sudo mkdir /var/docker_file/tmp/ > /dev/null 2>&1
 	tput clear
 	#创建网站项目文件夹-结束
-	#下载Wordpress文件
-	echo -e "下载Wordpress文件中"
+	#下载Cloudreve文件
+	echo -e "下载Cloudreve文件中"
 	sleep 1
 	for inumber in 1 2 3 4 5
 	do
@@ -371,16 +369,16 @@ then
 			tput clear
 		fi
 	done
-	#下载Wordpress文件-结束
+	#下载Cloudreve文件-结束
 	
-	#解压Wordpress文件
+	#解压Cloudreve文件
 	echo "开始解压文件"
 	sleep 1
 	sudo tar xzvf /var/docker_file/tmp/latest-zh_CN.tar.gz -C /var/docker_file/container/nginx_website/website_file/
-	echo "Wordpress文件解压完成"
+	echo "Cloudreve文件解压完成"
 	sleep 1
-	#解压Wordpress文件-结束
-#启动Wordpress应用部署-结束
+	#解压Cloudreve文件-结束
+#启动Cloudreve应用部署-结束
 	
 #部署docker-compose.yml-wordpress
 	#下载docker-compose.yml
@@ -389,20 +387,17 @@ then
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress.conf -P /var/docker_file/container/nginx_website/config/
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-https.conf.disabled -P /var/docker_file/container/nginx_website/config/
 	#下载初始SQL文件
-	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/init.sql -P /var/docker_file/container/mariadb_website/init.d/wordpress/
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/default-wordpress.sql -P /var/docker_file/container/ #TODO
 	#修改Nginx配置文件
 	echo -e -n "\033[33m请输入你的域名： \033[0m"
 	read -p "" hostname
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress.conf
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
 	#修改docker-compose.yml文件
-	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（超级管理员）密码：  \033[0m"
+	echo -e -n "\033[33m请输入即将设置的MariaDB Root（超级管理员）密码：  \033[0m"
 	read -p "" rootpasswd
-	echo -e -n "\033[33m请输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码：  \033[0m"
-	read -p "" wordpresspasswd
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/composer_file/wordpress/docker-compose.yml
 	sudo sed -i "s/ROOT_PASSWD/$rootpasswd/" /var/docker_file/composer_file/wordpress/docker-compose.yml
-	sudo sed -i "s/WORDPRESS_PASSWD/$wordpresspasswd/" /var/docker_file/container/mariadb_website/init.d/wordpress/init.sql
 	sleep 1
 	#下载初始nginx conf文件（包括nginx conf https）-结束
 	echo -e "\033[33m我们正在设置数据库和php库，请等待\033[0m"
@@ -415,7 +410,7 @@ then
 
 elif [ $CCWPI = "n" ] && [ $WPI = "n" ]
 then
-	echo -e "\033[31m终止部署（安装）Wordpress应用，本脚本即将退出...... \033[0m" && exit 0
+	echo -e "\033[31m终止部署（安装）Cloudreve应用，本脚本即将退出...... \033[0m" && exit 0
 
 fi
 

@@ -11,14 +11,14 @@
 
 ## 使用方法：  
 
-使用Github官方源：
+使用**Github**官方源：
 ```shell
 sudo curl -fsSL https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/wordpress-website.sh | bash
 ```  
 
-使用The ESAP Project镜像源：
+使用**The ESAP Project**镜像源：
 ```shell
 sudo curl -fsSL https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-website.sh | bash
 ```  
 
-将此命令复制到Linux Shell中，即可自动安装Cloudreve
+将此命令复制到*Linux Shell*中，即可自动安装Cloudreve
