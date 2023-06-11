@@ -416,7 +416,6 @@ then
 elif [ $CCWPI = "n" ] && [ $WPI = "n" ]
 then
 	echo -e "\033[31m终止部署（安装）Wordpress应用，本脚本即将退出...... \033[0m" && exit 0
-
 fi
 
 
