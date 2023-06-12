@@ -399,16 +399,19 @@ then
 	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（超级管理员）密码：  \033[0m"
 	read -p "" rootpasswd
 	echo -e -n "\033[33m请输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码：  \033[0m"
-	read -p "" wordpresspasswd
+	read -p "" wordpressdbpasswd
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/composer_file/wordpress/docker-compose.yml
 	sudo sed -i "s/ROOT_PASSWD/$rootpasswd/" /var/docker_file/composer_file/wordpress/docker-compose.yml
-	sudo sed -i "s/WORDPRESS_PASSWD/$wordpresspasswd/" /var/docker_file/container/mariadb_website/init.d/wordpress/init.sql
+	sudo sed -i "s/WORDPRESS_PASSWD/$wordpressdbpasswd/" /var/docker_file/container/mariadb_website/init.d/wordpress/init.sql
 	sleep 1
 	#下载初始nginx conf文件（包括nginx conf https）-结束
 	echo -e "\033[33m我们正在设置数据库和php库，请等待\033[0m"
 	echo " "
+	#更改Wordpress配置文件
+	
+	#更改Wordpress配置文件-结束
 	#启动Docker Compose部署
-	sudo docker compose -f /var/docker_file/composer_file/wordpress/docker-compose.yml up -d
+	#sudo docker compose -f /var/docker_file/composer_file/wordpress/docker-compose.yml up -d
 
 
 #部署docker-compose.yml-wordpress-结束

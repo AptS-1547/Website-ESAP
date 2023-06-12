@@ -48,7 +48,7 @@ services:
       - nginx-website-config:/etc/nginx/conf.d
       - /var/docker_file/logs/nginx_website/:/var/log/nginx
 
-  mariadb-ebsite:
+  mariadb-website:
     container_name: mariadb-website
     image: mariadb:latest
     restart: always
