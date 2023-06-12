@@ -13,14 +13,12 @@
 
 使用**Github**官方源：
 ```shell
-sudo wget https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/wordpress-website.sh
-sudo bash wordpress-website.sh
+sudo wget -c https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/wordpress-website.sh && sudo bash wordpress-website.sh
 ```  
 
 使用**The ESAP Project**镜像源：
 ```shell
-sudo wget https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-website.sh
-sudo bash wordpress-website.sh
+sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-website.sh && sudo bash wordpress-website.sh
 ```  
 
 将此命令复制到*Linux Shell*中，即可自动安装Cloudreve
