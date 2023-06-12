@@ -383,6 +383,8 @@ then
 #启动Wordpress应用部署-结束
 	
 #部署docker-compose.yml-wordpress
+	#下载wp-config.php配置文件
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wp-config.php -P /var/docker_file/container/nginx_website/website_file/wordpress/
 	#下载docker-compose.yml
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose.yml -P /var/docker_file/composer_file/wordpress/
 	#下载初始Nginx conf文件（包括nginx conf https）
@@ -390,28 +392,37 @@ then
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-https.conf.disabled -P /var/docker_file/container/nginx_website/config/
 	#下载初始SQL文件
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/init.sql -P /var/docker_file/container/mariadb_website/init.d/wordpress/
-	#修改Nginx配置文件
+	sleep 1
+	tput clear
+	#修改Nginx配置文件-获取信息
 	echo -e -n "\033[33m请输入你的域名： \033[0m"
 	read -p "" hostname
+	#修改Nginx配置文件
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress.conf
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
-	#修改docker-compose.yml文件
+	#修改docker-compose.yml文件-获取信息
 	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（超级管理员）密码：  \033[0m"
 	read -p "" rootpasswd
 	echo -e -n "\033[33m请输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码：  \033[0m"
 	read -p "" wordpressdbpasswd
+	sleep 1
+	tput clear
+	echo -e "\033[33m我们正在设置数据库和php库，请等待\033[0m"
+	sleep 1
+	#修改docker-compose.yml文件
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/composer_file/wordpress/docker-compose.yml
 	sudo sed -i "s/ROOT_PASSWD/$rootpasswd/" /var/docker_file/composer_file/wordpress/docker-compose.yml
+	#修改init.sql文件
 	sudo sed -i "s/WORDPRESS_PASSWD/$wordpressdbpasswd/" /var/docker_file/container/mariadb_website/init.d/wordpress/init.sql
-	sleep 1
-	#下载初始nginx conf文件（包括nginx conf https）-结束
-	echo -e "\033[33m我们正在设置数据库和php库，请等待\033[0m"
-	echo " "
 	#更改Wordpress配置文件
+	sudo sed -i "s/WORDPRESS_PASSWD/$wordpressdbpasswd/" /var/docker_file/container/nginx_website/website_file/wordpress/wp-config.php
+	sudo curl https://api.wordpress.org/secret-key/1.1/salt/ > /var/docker_file/tmp/KEYS_AND_SALTS
+	sudo sed -i "52 r /var/docker_file/tmp/KEYS_AND_SALTS" /var/docker_file/container/nginx_website/website_file/wordpress/wp-config.php
 	
 	#更改Wordpress配置文件-结束
 	#启动Docker Compose部署
 	#sudo docker compose -f /var/docker_file/composer_file/wordpress/docker-compose.yml up -d
+	sudo rm -rf /var/docker_file/tmp/
 
 
 #部署docker-compose.yml-wordpress-结束
