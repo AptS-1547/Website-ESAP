@@ -438,13 +438,18 @@ then
 	sudo sed -i "s/uploadmaxmium/$uploadmaxmium/" /var/docker_file/container/php_website/config/php.ini
 	#php-fpm插件安装
 	sudo docker exec -it php-8.1.18-fpm-website apt update > /dev/null
-	sudo docker exec -it php-8.1.18-fpm-website apt install -y libzip-dev libicu-dev zlib1g-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev > /dev/null
+	sudo docker exec -it php-8.1.18-fpm-website apt install -y libzip-dev libicu-dev zlib1g-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev libmagickwand-dev > /dev/null
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install mysqli > /dev/null
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install gd > /dev/null
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install exif > /dev/null
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install zip > /dev/null
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install intl > /dev/null
-	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install pecl install imagick > /dev/null
+	echo -e "\033[33m由于PHP Imagick扩展安装过程中需要人工提供Imagemagick安装前缀\033[0m"
+	echo -e "\033[33m当出现：“please provide the prefix of imagemagick installation [autodetect] : ”时\033[0m"
+	echo -e "\033[33m请你按下键盘上的“Enter”来继续安装，请勿输入其他内容\033[0m"
+	echo -e "\033[33m将在10秒后继续安装……\033[0m"
+	sleep 10
+	sudo docker exec -it php-8.1.18-fpm-website pecl install imagick
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install imagick > /dev/null
 	#重启服务
 	sudo docker compose -f /var/docker_file/compose_file/wordpress/docker-compose.yml restart
