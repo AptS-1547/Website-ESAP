@@ -437,12 +437,41 @@ then
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/php.ini -P /var/docker_file/container/php_website/config/ > /dev/null
 	sudo sed -i "s/uploadmaxmium/$uploadmaxmium/" /var/docker_file/container/php_website/config/php.ini
 	#php-fpm插件安装
+	sleep 1
+	echo -e "\033[33m请设置接下来安装PHP扩展时使用的镜像源\033[0m"
+	echo -e "\033[33m1. 使用Debian官方源（推荐服务器在国外时使用）\033[0m"
+	echo -e "\033[33m2. 使用USTC Mirror（推荐服务器在国内时使用）\033[0m"
+	while true
+	do
+		echo -e -n "\033[33m请输入相对应镜像源数字编号： \033[0m"
+		read -p "" -s mirrornumber
+		case $mirrornumber in 
+			[1])
+				break
+				;;
+			[2])
+				sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/sources.list -P /var/docker_file/tmp/ > /dev/null
+				sudo docker cp /var/docker_file/tmp/sources.list php-8.1.18-fpm-website:/etc/apt/sources.list
+				break
+				;;
+			*)
+				echo "输入有误，请重新输入"
+				;;
+		esac
+	done
+	tput clear
+	echo "正在安装PHP扩展依赖，请稍后……"
 	sudo docker exec -it php-8.1.18-fpm-website apt update > /dev/null
 	sudo docker exec -it php-8.1.18-fpm-website apt install -y libzip-dev libicu-dev zlib1g-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev libmagickwand-dev > /dev/null
+	echo "正在安装PHP mysqli扩展，请稍后……"
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install mysqli > /dev/null
+	echo "正在安装PHP gd扩展，请稍后……"
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install gd > /dev/null
+	echo "正在安装PHP exif扩展，请稍后……"
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install exif > /dev/null
+	echo "正在安装PHP zip扩展，请稍后……"
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install zip > /dev/null
+	echo "正在安装PHP intl扩展，请稍后……"
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install intl > /dev/null
 	echo -e "\033[33m由于PHP Imagick扩展安装过程中需要人工提供Imagemagick安装前缀\033[0m"
 	echo -e "\033[33m当出现：“please provide the prefix of imagemagick installation [autodetect] : ”时\033[0m"
@@ -452,6 +481,8 @@ then
 	sudo docker exec -it php-8.1.18-fpm-website pecl install imagick
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install imagick > /dev/null
 	#重启服务
+	echo "正在重启docker服务，请稍后……"
+	sleep 1
 	sudo docker compose -f /var/docker_file/compose_file/wordpress/docker-compose.yml restart
 	sudo rm -rf /var/docker_file/tmp/
 #部署docker-compose.yml-wordpress-结束
