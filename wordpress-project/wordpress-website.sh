@@ -331,8 +331,8 @@ then
 	sleep 1
 	sudo mkdir /var/docker_file/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/container/ > /dev/null 2>&1
-	sudo mkdir /var/docker_file/composer_file/ > /dev/null 2>&1
-	sudo mkdir /var/docker_file/composer_file/wordpress/ > /dev/null 2>&1
+	sudo mkdir /var/docker_file/compose_file/ > /dev/null 2>&1
+	sudo mkdir /var/docker_file/compose_file/wordpress/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/logs/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/logs/nginx_website/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/logs/mariadb_website/ > /dev/null 2>&1
@@ -379,7 +379,6 @@ then
 	sleep 1
 	sudo tar xzvf /var/docker_file/tmp/latest-zh_CN.tar.gz -C /var/docker_file/container/nginx_website/website_file/
 	echo "Wordpress文件解压完成！"
-	sudo chmod -R 777 /var/docker_file/container/nginx_website/website_file/wordpress/
 	sleep 1
 	#解压Wordpress文件-结束
 #启动Wordpress应用部署-结束
@@ -389,21 +388,27 @@ then
 	echo "下载Wordpress配置文件中……"
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wp-config.php -P /var/docker_file/container/nginx_website/website_file/wordpress/ > /dev/null
 	#下载docker-compose.yml
-	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose.yml -P /var/docker_file/composer_file/wordpress/ > /dev/null
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose.yml -P /var/docker_file/compose_file/wordpress/ > /dev/null
 	#下载初始Nginx conf文件（包括nginx conf https）
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress.conf -P /var/docker_file/container/nginx_website/config/ > /dev/null
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-https.conf.disabled -P /var/docker_file/container/nginx_website/config/ > /dev/null
 	#下载初始SQL文件
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/init.sql -P /var/docker_file/container/mariadb_website/init.d/wordpress/ > /dev/null
+	sudo chmod -R 777 /var/docker_file/container/nginx_website/website_file/wordpress/
 	echo -e "\033[33m下载完成！\033[0m"
 	sleep 1
 	tput clear
 	#修改Nginx配置文件-获取信息
 	echo -e -n "\033[33m请输入你的域名（比如example.com，不用输入http或https）： \033[0m"
 	read -p "" hostname
-	#修改Nginx配置文件
+	echo -e -n "\033[33m请输入Wordpress网站文件最大上传大小（单位：MB，结尾请输入M。如30M）： \033[0m"
+	read -p "" uploadmaxmium
+	#修改Nginx配置文件-绑定域名
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress.conf
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
+	#修改Nginx配置文件-上传文件限制
+	sudo sed -i "s/uploadmaxmium/$uploadmaxmium/" /var/docker_file/container/nginx_website/config/wordpress.conf
+	sudo sed -i "s/uploadmaxmium/$uploadmaxmium/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
 	#修改docker-compose.yml文件-获取信息
 	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（数据库超级管理员）密码： \033[0m"
 	read -p "" -s rootpasswd
@@ -413,11 +418,11 @@ then
 	echo " "
 	sleep 1
 	tput clear
-	echo -e "\033[33m我们正在设置数据库和php库，请等待\033[0m"
+	echo -e "\033[33m我们正在设置数据库和php库，请等待……（这可能需要较长时间）\033[0m"
 	sleep 1
 	#修改docker-compose.yml文件
-	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/composer_file/wordpress/docker-compose.yml
-	sudo sed -i "s/ROOT_PASSWD/$rootpasswd/" /var/docker_file/composer_file/wordpress/docker-compose.yml
+	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/compose_file/wordpress/docker-compose.yml
+	sudo sed -i "s/ROOT_PASSWD/$rootpasswd/" /var/docker_file/compose_file/wordpress/docker-compose.yml
 	#修改init.sql文件
 	sudo sed -i "s/WORDPRESS_PASSWD/$wordpressdbpasswd/" /var/docker_file/container/mariadb_website/init.d/wordpress/init.sql
 	#更改Wordpress配置文件
@@ -427,9 +432,59 @@ then
 	#更改Wordpress配置文件-结束
 	
 	#启动Docker Compose部署
-	sudo docker compose -f /var/docker_file/composer_file/wordpress/docker-compose.yml up -d
+	sudo docker compose -f /var/docker_file/compose_file/wordpress/docker-compose.yml up -d
+	#下载默认php.ini文件 && 修改php.ini配置文件-上传文件限制
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/php.ini -P /var/docker_file/container/php_website/config/ > /dev/null
+	sudo sed -i "s/uploadmaxmium/$uploadmaxmium/" /var/docker_file/container/php_website/config/php.ini
+	#php-fpm插件安装
+	sleep 1
+	echo -e "\033[33m请设置接下来安装PHP扩展时使用的镜像源\033[0m"
+	echo -e "\033[33m1. 使用Debian官方源（推荐服务器在国外时使用）\033[0m"
+	echo -e "\033[33m2. 使用USTC Mirror（推荐服务器在国内时使用）\033[0m"
+	while true
+	do
+		echo -e -n "\033[33m请输入相对应镜像源数字编号： \033[0m"
+		read -p "" mirrornumber
+		case $mirrornumber in 
+			[1])
+				break
+				;;
+			[2])
+				sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/sources.list -P /var/docker_file/tmp/ > /dev/null
+				sudo docker cp /var/docker_file/tmp/sources.list php-8.1.18-fpm-website:/etc/apt/sources.list
+				break
+				;;
+			*)
+				echo "输入有误，请重新输入"
+				;;
+		esac
+	done
+	tput clear
+	echo "正在安装PHP扩展依赖，请稍后……"
+	sudo docker exec -it php-8.1.18-fpm-website apt update > /dev/null
+	sudo docker exec -it php-8.1.18-fpm-website apt install -y wget libzip-dev libicu-dev zlib1g-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev libmagickwand-dev imagemagick libmagick++-dev > /dev/null
+	echo "正在安装PHP mysqli扩展，请稍后……"
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install mysqli > /dev/null
-	sudo docker compose -f /var/docker_file/composer_file/wordpress/docker-compose.yml restart
+	echo "正在安装PHP gd扩展，请稍后……"
+	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install gd > /dev/null
+	echo "正在安装PHP exif扩展，请稍后……"
+	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install exif > /dev/null
+	echo "正在安装PHP zip扩展，请稍后……"
+	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install zip > /dev/null
+	echo "正在安装PHP intl扩展，请稍后……"
+	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install intl > /dev/null
+	echo -e "\033[33m由于PHP Imagick扩展安装过程中需要人工提供Imagemagick安装前缀\033[0m"
+	echo -e "\033[33m当出现：“please provide the prefix of imagemagick installation [autodetect] : ”时\033[0m"
+	echo -e "\033[33m请你按下键盘上的“Enter”来继续安装，请勿输入其他内容\033[0m"
+	echo -e "\033[33m将在10秒后继续安装……\033[0m"
+	sleep 10
+	sudo docker exec -it php-8.1.18-fpm-website pecl install imagick
+	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install imagick > /dev/null
+	sudo sed -i "953 r extension=imagick.so" /var/docker_file/container/php_website/config/php.ini
+	#重启服务
+	echo "正在重启docker服务，请稍后……"
+	sleep 1
+	sudo docker compose -f /var/docker_file/compose_file/wordpress/docker-compose.yml restart
 	sudo rm -rf /var/docker_file/tmp/
 #部署docker-compose.yml-wordpress-结束
 
