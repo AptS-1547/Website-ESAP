@@ -418,7 +418,7 @@ then
 	echo " "
 	sleep 1
 	tput clear
-	echo -e "\033[33m我们正在设置数据库和php库，请等待……（这可能需要较长时间）\033[0m"
+	echo -e "\033[33m我们正在设置Docker Compose和MariaDB数据库，请等待……（这可能需要较长时间）\033[0m"
 	sleep 1
 	#修改docker-compose.yml文件
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/compose_file/wordpress/docker-compose.yml
@@ -480,7 +480,7 @@ then
 	sleep 10
 	sudo docker exec -it php-8.1.18-fpm-website pecl install imagick
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install imagick > /dev/null
-	sudo sed -i "953 r extension=imagick.so" /var/docker_file/container/php_website/config/php.ini
+	sudo sed -i "s/;extension=imagick.so/extension=imagick.so/" /var/docker_file/container/php_website/config/php.ini
 	#重启服务
 	echo "正在重启docker服务，请稍后……"
 	sleep 1
