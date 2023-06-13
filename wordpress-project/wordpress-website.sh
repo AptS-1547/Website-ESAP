@@ -392,6 +392,7 @@ then
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-https.conf.disabled -P /var/docker_file/container/nginx_website/config/
 	#下载初始SQL文件
 	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/init.sql -P /var/docker_file/container/mariadb_website/init.d/wordpress/
+	echo -e "\033[33m下载完成！\033[0m"
 	sleep 1
 	tput clear
 	#修改Nginx配置文件-获取信息
@@ -410,6 +411,7 @@ then
 	echo -e "\033[33m我们正在设置数据库和php库，请等待\033[0m"
 	sleep 1
 	#修改docker-compose.yml文件
+	sudo chmod -R 777 /var/docker_file/container/nginx_website/website_file/wordpress/
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/composer_file/wordpress/docker-compose.yml
 	sudo sed -i "s/ROOT_PASSWD/$rootpasswd/" /var/docker_file/composer_file/wordpress/docker-compose.yml
 	#修改init.sql文件
