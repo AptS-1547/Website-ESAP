@@ -444,7 +444,7 @@ then
 	while true
 	do
 		echo -e -n "\033[33m请输入相对应镜像源数字编号： \033[0m"
-		read -p "" -s mirrornumber
+		read -p "" mirrornumber
 		case $mirrornumber in 
 			[1])
 				break
@@ -462,7 +462,7 @@ then
 	tput clear
 	echo "正在安装PHP扩展依赖，请稍后……"
 	sudo docker exec -it php-8.1.18-fpm-website apt update > /dev/null
-	sudo docker exec -it php-8.1.18-fpm-website apt install -y libzip-dev libicu-dev zlib1g-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev libmagickwand-dev > /dev/null
+	sudo docker exec -it php-8.1.18-fpm-website apt install -y wget libzip-dev libicu-dev zlib1g-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev libmagickwand-dev imagemagick libmagick++-dev > /dev/null
 	echo "正在安装PHP mysqli扩展，请稍后……"
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install mysqli > /dev/null
 	echo "正在安装PHP gd扩展，请稍后……"
@@ -480,6 +480,7 @@ then
 	sleep 10
 	sudo docker exec -it php-8.1.18-fpm-website pecl install imagick
 	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install imagick > /dev/null
+	sudo sed -i "953 r extension=imagick.so" /var/docker_file/container/php_website/config/php.ini
 	#重启服务
 	echo "正在重启docker服务，请稍后……"
 	sleep 1
