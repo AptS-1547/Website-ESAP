@@ -4,7 +4,7 @@
 
 ## 填坑程度
 - [x] [Docker自动化安装（install-docker）](https://github.com/AptS-1547/Website-ESAP/tree/master/install-docker)
-- [ ] [Wordpress自动建站（wordpress-project）](https://github.com/AptS-1547/Website-ESAP/tree/master/wordpress-project)
+- [x] [Wordpress自动建站（wordpress-project）](https://github.com/AptS-1547/Website-ESAP/tree/master/wordpress-project)
 - [ ] [Cloudreve网盘自动搭建（cloudreve-project）](https://github.com/AptS-1547/Website-ESAP/tree/master/cloudreve-project)
 
 ## 预期

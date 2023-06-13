@@ -29,6 +29,7 @@ export WPI="n"
 SYSTEM="none"
 
 #版权信息
+tput clear
 echo -e "\033[36m自动安装脚本"
 echo -e "Author: AptS-1547"
 echo -e "Description: 懒人化自动安装Wordpress脚本 \033[0m"
@@ -350,7 +351,7 @@ then
 	tput clear
 	#创建网站项目文件夹-结束
 	#下载Wordpress文件
-	echo -e "下载Wordpress文件中"
+	echo -e "下载Wordpress文件中……"
 	sleep 1
 	for inumber in 1 2 3 4 5
 	do
@@ -377,7 +378,7 @@ then
 	echo "开始解压文件"
 	sleep 1
 	sudo tar xzvf /var/docker_file/tmp/latest-zh_CN.tar.gz -C /var/docker_file/container/nginx_website/website_file/
-	echo "Wordpress文件解压完成"
+	echo "Wordpress文件解压完成！"
 	sudo chmod -R 777 /var/docker_file/container/nginx_website/website_file/wordpress/
 	sleep 1
 	#解压Wordpress文件-结束
@@ -385,14 +386,15 @@ then
 	
 #部署docker-compose.yml-wordpress
 	#下载wp-config.php配置文件
-	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wp-config.php -P /var/docker_file/container/nginx_website/website_file/wordpress/
+	echo "下载Wordpress配置文件中……"
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wp-config.php -P /var/docker_file/container/nginx_website/website_file/wordpress/ > /dev/null
 	#下载docker-compose.yml
-	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose.yml -P /var/docker_file/composer_file/wordpress/
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose.yml -P /var/docker_file/composer_file/wordpress/ > /dev/null
 	#下载初始Nginx conf文件（包括nginx conf https）
-	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress.conf -P /var/docker_file/container/nginx_website/config/
-	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-https.conf.disabled -P /var/docker_file/container/nginx_website/config/
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress.conf -P /var/docker_file/container/nginx_website/config/ > /dev/null
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-https.conf.disabled -P /var/docker_file/container/nginx_website/config/ > /dev/null
 	#下载初始SQL文件
-	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/init.sql -P /var/docker_file/container/mariadb_website/init.d/wordpress/
+	sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/init.sql -P /var/docker_file/container/mariadb_website/init.d/wordpress/ > /dev/null
 	echo -e "\033[33m下载完成！\033[0m"
 	sleep 1
 	tput clear
@@ -403,10 +405,12 @@ then
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress.conf
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
 	#修改docker-compose.yml文件-获取信息
-	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（超级管理员）密码： \033[0m"
-	read -p -s "" rootpasswd
+	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（数据库超级管理员）密码： \033[0m"
+	read -p "" -s rootpasswd
+	echo " "
 	echo -e -n "\033[33m请输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码： \033[0m"
-	read -p -s "" wordpressdbpasswd
+	read -p "" -s wordpressdbpasswd
+	echo " "
 	sleep 1
 	tput clear
 	echo -e "\033[33m我们正在设置数据库和php库，请等待\033[0m"
