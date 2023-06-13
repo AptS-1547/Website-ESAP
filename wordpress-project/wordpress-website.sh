@@ -378,6 +378,7 @@ then
 	sleep 1
 	sudo tar xzvf /var/docker_file/tmp/latest-zh_CN.tar.gz -C /var/docker_file/container/nginx_website/website_file/
 	echo "Wordpress文件解压完成"
+	sudo chmod -R 777 /var/docker_file/container/nginx_website/website_file/wordpress/
 	sleep 1
 	#解压Wordpress文件-结束
 #启动Wordpress应用部署-结束
@@ -396,22 +397,21 @@ then
 	sleep 1
 	tput clear
 	#修改Nginx配置文件-获取信息
-	echo -e -n "\033[33m请输入你的域名： \033[0m"
+	echo -e -n "\033[33m请输入你的域名（比如example.com，不用输入http或https）： \033[0m"
 	read -p "" hostname
 	#修改Nginx配置文件
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress.conf
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
 	#修改docker-compose.yml文件-获取信息
-	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（超级管理员）密码：  \033[0m"
-	read -p "" rootpasswd
-	echo -e -n "\033[33m请输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码：  \033[0m"
-	read -p "" wordpressdbpasswd
+	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（超级管理员）密码： \033[0m"
+	read -p -s "" rootpasswd
+	echo -e -n "\033[33m请输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码： \033[0m"
+	read -p -s "" wordpressdbpasswd
 	sleep 1
 	tput clear
 	echo -e "\033[33m我们正在设置数据库和php库，请等待\033[0m"
 	sleep 1
 	#修改docker-compose.yml文件
-	sudo chmod -R 777 /var/docker_file/container/nginx_website/website_file/wordpress/
 	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/composer_file/wordpress/docker-compose.yml
 	sudo sed -i "s/ROOT_PASSWD/$rootpasswd/" /var/docker_file/composer_file/wordpress/docker-compose.yml
 	#修改init.sql文件
@@ -420,13 +420,13 @@ then
 	sudo sed -i "s/WORDPRESS_PASSWD/$wordpressdbpasswd/" /var/docker_file/container/nginx_website/website_file/wordpress/wp-config.php
 	sudo curl https://api.wordpress.org/secret-key/1.1/salt/ > /var/docker_file/tmp/KEYS_AND_SALTS
 	sudo sed -i "52 r /var/docker_file/tmp/KEYS_AND_SALTS" /var/docker_file/container/nginx_website/website_file/wordpress/wp-config.php
-	
 	#更改Wordpress配置文件-结束
+	
 	#启动Docker Compose部署
-	#sudo docker compose -f /var/docker_file/composer_file/wordpress/docker-compose.yml up -d
+	sudo docker compose -f /var/docker_file/composer_file/wordpress/docker-compose.yml up -d
+	sudo docker exec -it php-8.1.18-fpm-website docker-php-ext-install mysqli > /dev/null
+	sudo docker compose -f /var/docker_file/composer_file/wordpress/docker-compose.yml restart
 	sudo rm -rf /var/docker_file/tmp/
-
-
 #部署docker-compose.yml-wordpress-结束
 
 elif [ $CCWPI = "n" ] && [ $WPI = "n" ]
