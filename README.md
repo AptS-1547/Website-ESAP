@@ -6,6 +6,7 @@
 - [ ] [Website-ESAP安装程序门户](https://github.com/AptS-1547/Website-ESAP/tree/master/install-program-portal)
 - [x] [Docker自动化安装（install-docker）](https://github.com/AptS-1547/Website-ESAP/tree/master/install-docker)
 - [x] [Wordpress自动建站（wordpress-project）](https://github.com/AptS-1547/Website-ESAP/tree/master/wordpress-project)
+- [ ] [FSD4.0 连飞服务器非官方自动搭建（fsd4.0_server）](https://github.com/AptS-1547/Website-ESAP/tree/master/fsd4.0_server)
 - [ ] [Cloudreve网盘自动搭建（cloudreve-project）](https://github.com/AptS-1547/Website-ESAP/tree/master/cloudreve-project)
 
 ## 预期
