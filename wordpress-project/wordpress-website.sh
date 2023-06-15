@@ -285,6 +285,7 @@ then
 	
 	sleep 0.5
 	echo "......Docker Compose安装完成"
+	sleep 1
 
 elif [ $CCDI = "n" ] && [ $DI = "n" ]
 then
@@ -297,6 +298,7 @@ fi
 sudo docker network ls | grep "wordpress_server_for_public" > /dev/null
 if [ $? -eq 0 ]
 then
+	tput clear
 	echo "检测到服务器已使用本脚本部署（安装）Wordpress应用，自动跳过部署（安装）......" 
 	export WPI="y"
 	sleep 1

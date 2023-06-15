@@ -5,7 +5,11 @@ services:
     image: apts1547/fsd4.0_server:latest
     restart: always
     volumes:
-      - fsd4.0_server_config:/FSD4.0_Server
+      - fsd4.0_server_config:/FSDServer
+    ports:
+      - 6809:6809
+      - 3011:3011
+      - 3010:3010
 
 volumes:
   fsd4.0_server_config:

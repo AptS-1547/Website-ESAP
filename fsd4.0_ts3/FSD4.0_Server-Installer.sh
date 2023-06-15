@@ -23,15 +23,18 @@ export UCDI="n"
 export UCDCI="n"
 export DI="n"
 export DCI="n"
-export UCWPI="n"
-export CCWPI="n"
-export WPI="n"
+export UCFSDI="n"
+export CCFSDI="n"
+export FSDI="n"
+export UCTSI="n"
+export CCTSI="n"
+export TSI="n"
 SYSTEM="none"
 
 #版权信息
 echo -e "\033[36m自动安装脚本"
 echo -e "Author: AptS-1547"
-echo -e "Description: 懒人化自动安装Wordpress脚本 \033[0m"
+echo -e "Description: 懒人化自动安装FSD4.0 连飞服务器 && Teamspeak3服务器脚本 \033[0m"
 #版权信息-结束
 
 sleep 0.5
@@ -284,6 +287,7 @@ then
 	
 	sleep 0.5
 	echo "......Docker Compose安装完成"
+	sleep 1
 
 elif [ $CCDI = "n" ] && [ $DI = "n" ]
 then
@@ -293,24 +297,25 @@ fi
 #Docker Compose自动安装-结束
 
 #是否启动FSD4.0 连飞服务器部署
-sudo docker network ls | grep "fsd4.0_server_default" > /dev/null
+sudo docker ps -a | grep "fsd4.0_server" > /dev/null
 if [ $? -eq 0 ]
 then
+	tput clear
 	echo "检测到服务器已使用本脚本部署（安装）FSD4.0 连飞服务器，自动跳过部署（安装）......" 
-	export WPI="y"
+	export FSDI="y"
 	sleep 1
 else
 	while true
 	do
 		echo -e -n "\033[33m监测到服务器未部署（安装）FSD4.0 连飞服务器，是否部署（安装）？[y/n] \033[0m"
-		read -p "" UCWPI
+		read -p "" UCFSDI
 		case $UCWPI in 
 			[yY])
-				export CCWPI="y"
+				export CCFSDI="y"
 				break
 				;;
 			[nN])
-				export CCWPI="n"
+				export CCFSDI="n"
 				break
 				;;
 			*)
@@ -322,7 +327,7 @@ fi
 #是否启动FSD4.0 连飞服务器部署-结束
 
 #启动FSD4.0 连飞服务器部署
-if [ $CCWPI = "y" ] && [ $WPI = "n" ]
+if [ $CCFSDI = "y" ] && [ $FSDI = "n" ]
 then
 	#创建FSD4.0 连飞服务器文件目录
 	echo "将在/var文件夹下创建FSD4.0 连飞服务器文件目录......"
@@ -330,27 +335,85 @@ then
 	sleep 1
 	sudo mkdir /var/docker_file/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/container/ > /dev/null 2>&1
-	sudo mkdir /var/docker_file/composer_file/ > /dev/null 2>&1
-	sudo mkdir /var/docker_file/composer_file/fsd4.0_server/ > /dev/null 2>&1
+	sudo mkdir /var/docker_file/compose_file/ > /dev/null 2>&1
+	sudo mkdir /var/docker_file/compose_file/fsd4.0_server/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/container/fsd4.0_server/ > /dev/null 2>&1
 	sudo mkdir /var/docker_file/container/fsd4.0_server/config/ > /dev/null 2>&1
 	tput clear
-#部署docker-compose.yml
+#部署docker-compose-fsd4.0.yml
 	#下载docker-compose.yml
-	sudo curl https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose.yml >  /var/docker_file/compose_file/fsd4.0_server/docker-compose.yml
+	sudo curl https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose-fsd4.0.yml >  /var/docker_file/compose_file/fsd4.0_server/docker-compose.yml
 	echo -e "\033[33m下载完成！\033[0m"
 	sleep 1
 	tput clear
-	echo -e "\033[33m我们正在设置FSD4.0 连飞服务器，请等待……（这可能需要较长时间）\033[0m"
+	
+	echo -e "\033[33m我们正在设置FSD4.0 连飞服务器，请等待……\033[0m"
 	sleep 1
 	#启动Docker Compose部署
 	sudo docker compose -f /var/docker_file/compose_file/fsd4.0_server/docker-compose.yml up -d
+fi
 #部署docker-compose.yml--结束
 #部署FSD4.0 连飞服务器-结束
 
-elif [ $CCWPI = "n" ] && [ $WPI = "n" ]
+#是否启动TeamSpeak3服务器部署
+sudo docker ps -a | grep "fsd4.0_server" > /dev/null
+if [ $? -eq 0 ]
 then
-	echo -e "\033[31m终止部署（安装）FSD4.0 连飞服务器，本脚本即将退出...... \033[0m" && exit 0
+	tput clear
+	echo "检测到服务器已使用本脚本部署（安装）TeamSpeak3服务器，自动跳过部署（安装）......" 
+	export TSI="y"
+	sleep 1
+else
+	while true
+	do
+		echo -e -n "\033[33m监测到服务器未部署（安装）TeamSpeak3服务器，是否部署（安装）？[y/n] \033[0m"
+		read -p "" UCTSI
+		case $UCTSI in 
+			[yY])
+				export CCTSI="y"
+				break
+				;;
+			[nN])
+				export CCTSI="n"
+				break
+				;;
+			*)
+				echo "输入有误，请重新输入"
+				;;
+		esac
+	done
+fi
+#是否启动TeamSpeak3服务器部署-结束
+
+#启动TeamSpeak3服务器部署
+if [ $CCTSI = "y" ] && [ $TSI = "n" ]
+then
+	#创建TeamSpeak3服务器文件目录
+	echo "将在/var文件夹下创建TeamSpeak3服务器文件目录......"
+	echo "路径：/var/docker_file/"
+	sleep 1
+	sudo mkdir /var/docker_file/ > /dev/null 2>&1
+	sudo mkdir /var/docker_file/container/ > /dev/null 2>&1
+	sudo mkdir /var/docker_file/composer_file/ > /dev/null 2>&1
+	sudo mkdir /var/docker_file/composer_file/teamspeak3/ > /dev/null 2>&1
+	sudo mkdir /var/docker_file/container/teamspeak3/ > /dev/null 2>&1
+	sudo mkdir /var/docker_file/container/teamspeak3/config/ > /dev/null 2>&1
+	tput clear
+#部署docker-compose.yml
+	#下载docker-compose-ts3.yml
+	sudo curl https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose-ts3.yml >  /var/docker_file/compose_file/teamspeak3/docker-compose.yml
+	echo -e "\033[33m下载完成！\033[0m"
+	sleep 1
+	tput clear
+	echo -e "\033[33m我们正在设置TeamSpeak3服务器，请等待……（这可能需要较长时间）\033[0m"
+	sleep 1
+	#启动Docker Compose部署
+	sudo docker compose -f /var/docker_file/compose_file/teamspeak3/docker-compose.yml up -d
+#部署docker-compose.yml--结束
+#部署FSD4.0 连飞服务器-结束
+elif [ $CCFSDI = "n" ] && [ $FSDI = "n" ] && [ $CCTSI = "n" ] && [ $TSI = "n" ]
+then
+	echo -e "\033[31m终止部署（安装）FSD4.0 连飞服务器和Teamspeak3服务器，本脚本即将退出...... \033[0m" && exit 0
 fi
 
 #结束

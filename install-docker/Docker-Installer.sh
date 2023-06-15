@@ -29,6 +29,7 @@ export WPI="n"
 SYSTEM="none"
 
 #版权信息
+tput clear
 echo -e "\033[36mDocker自动安装脚本"
 echo -e "Author: AptS-1547"
 echo -e "Description: 懒人化自动安装Docker脚本（支持OpencloudOS等官方不支持系统，不支持Fedora） \033[0m"
@@ -284,6 +285,7 @@ then
 	
 	sleep 0.5
 	echo "......Docker Compose安装完成"
+	sleep 1
 
 elif [ $CCDI = "n" ] && [ $DI = "n" ]
 then
