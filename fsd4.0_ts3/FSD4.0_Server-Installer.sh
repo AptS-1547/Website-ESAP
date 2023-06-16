@@ -32,6 +32,7 @@ export TSI="n"
 SYSTEM="none"
 
 #版权信息
+tput clear
 echo -e "\033[36m自动安装脚本"
 echo -e "Author: AptS-1547"
 echo -e "Description: 懒人化自动安装FSD4.0 连飞服务器 && Teamspeak3服务器脚本 \033[0m"

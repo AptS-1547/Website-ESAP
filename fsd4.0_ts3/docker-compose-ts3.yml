@@ -2,6 +2,7 @@ version: "3.8"
 services:
   teamspeak:
     image: teamspeak
+    container_name: teamspeak
     restart: always
     ports:
       - 9987:9987/udp
@@ -12,30 +13,22 @@ services:
     environment:
       TS3SERVER_DB_PLUGIN: ts3db_mariadb
       TS3SERVER_DB_SQLCREATEPATH: create_mariadb
-      TS3SERVER_DB_HOST: db
+      TS3SERVER_DB_HOST: mariadb-teamspeak3
       TS3SERVER_DB_USER: root
-      TS3SERVER_DB_PASSWORD: example
+      TS3SERVER_DB_PASSWORD: mariadb_root_passwd
       TS3SERVER_DB_NAME: teamspeak
       TS3SERVER_DB_WAITUNTILREADY: 30
       TS3SERVER_LICENSE: accept
 
-  db:
+  mariadb-teamspeak3:
     image: mariadb
+    container_name: mariadb-teamspeak3
     restart: always
     networks:
       - teamspeak3
     environment:
-      MYSQL_ROOT_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: mariadb_root_passwd
       MYSQL_DATABASE: teamspeak
-
-
-volumes:
-  fsd4.0_server_config:
-    driver: local
-    driver_opts:
-      type: none
-      device: /var/docker_file/container/fsd4.0_server/config/
-      o: bind
 
 networks:
   teamspeak3:
