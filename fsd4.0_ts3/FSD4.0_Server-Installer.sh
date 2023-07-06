@@ -72,7 +72,7 @@ else
 	do
 		echo -e -n "\033[33m监测到服务器未安装Docker，是否安装？[y/n] \033[0m"
 		read -p "" UCDI
-		case $UCDI in 
+		case ${UCDI} in 
 			[yY])
 				export CCDI="y"
 				break
@@ -90,7 +90,7 @@ fi
 #验证服务器是否安装Docker-结束
 
 #Docker自动安装
-if [ $CCDI = "y" ] && [ $DI = "n" ] && [ $SYSTEM = "dnf" ]
+if [ ${CCDI} = "y" ] && [ ${DI} = "n" ] && [ ${SYSTEM} = "dnf" ]
 then
 	tput clear
 	echo "安装Docker中......"
@@ -131,7 +131,7 @@ then
 	export DI="y"
 	echo "......Docker安装完成"
 
-elif [ $CCDI = "y" ] && [ $DI = "n" ] && [ $SYSTEM = "apt" ]
+elif [ ${CCDI} = "y" ] && [ ${DI} = "n" ] && [ ${SYSTEM} = "apt" ]
 then
 	tput clear
 	echo "安装Docker中......"
@@ -195,7 +195,7 @@ then
 	export DI="y"
 	echo "......Docker安装完成"
 
-elif [ $CCDI = "n" ] && [ $DI = "n" ]
+elif [ ${CCDI} = "n" ] && [ ${DI} = "n" ]
 then
 	echo -e "\033[31m终止安装Docker，本脚本即将退出...... \033[0m" && exit 0
 
@@ -217,7 +217,7 @@ else
 	do
 		echo -e -n "\033[33m监测到服务器未安装Docker Compose，是否安装？[y/n] \033[0m"
 		read -p "" UCDCI
-		case $UCDCI in 
+		case ${UCDCI} in 
 			[yY])
 				export CCDCI="y"
 				break
@@ -235,7 +235,7 @@ fi
 #验证服务器是否安装Docker Compose结束
 
 #Docker Compose自动安装
-if [ $CCDCI = "y" ] && [ $DI = "y" ] && [ $DCI = "n" ] && [ $SYSTEM = "dnf" ]
+if [ ${CCDCI} = "y" ] && [ ${DI} = "y" ] && [ ${DCI} = "n" ] && [ ${SYSTEM} = "dnf" ]
 then
 	tput clear
 	echo "安装Docker Compose中......"
@@ -262,7 +262,7 @@ then
 	sleep 0.5
 	echo "......Docker Compose安装完成"
 
-elif [ $CCDCI = "y" ] && [ $DI = "y" ] && [ $DCI = "n" ] && [ $SYSTEM = "apt" ]
+elif [ ${CCDCI} = "y" ] && [ ${DI} = "y" ] && [ ${DCI} = "n" ] && [ ${SYSTEM} = "apt" ]
 then
 	tput clear
 	echo "安装Docker Compose中......"
@@ -290,7 +290,7 @@ then
 	echo "......Docker Compose安装完成"
 	sleep 1
 
-elif [ $CCDI = "n" ] && [ $DI = "n" ]
+elif [ ${CCDI} = "n" ] && [ ${DI} = "n" ]
 then
 	echo -e "\033[31m终止安装Docker Compose，本脚本即将退出...... \033[0m" && exit 0
 
@@ -310,7 +310,7 @@ else
 	do
 		echo -e -n "\033[33m监测到服务器未部署（安装）FSD4.0 连飞服务器，是否部署（安装）？[y/n] \033[0m"
 		read -p "" UCFSDI
-		case $UCWPI in 
+		case ${UCWPI} in 
 			[yY])
 				export CCFSDI="y"
 				break
@@ -328,7 +328,7 @@ fi
 #是否启动FSD4.0 连飞服务器部署-结束
 
 #启动FSD4.0 连飞服务器部署
-if [ $CCFSDI = "y" ] && [ $FSDI = "n" ]
+if [ ${CCFSDI} = "y" ] && [ ${FSDI} = "n" ]
 then
 	#创建FSD4.0 连飞服务器文件目录
 	echo "将在/var文件夹下创建FSD4.0 连飞服务器文件目录......"
@@ -369,7 +369,7 @@ else
 	do
 		echo -e -n "\033[33m监测到服务器未部署（安装）TeamSpeak3服务器，是否部署（安装）？[y/n] \033[0m"
 		read -p "" UCTSI
-		case $UCTSI in 
+		case ${UCTSI} in 
 			[yY])
 				export CCTSI="y"
 				break
@@ -387,7 +387,7 @@ fi
 #是否启动TeamSpeak3服务器部署-结束
 
 #启动TeamSpeak3服务器部署
-if [ $CCTSI = "y" ] && [ $TSI = "n" ]
+if [ ${CCTSI} = "y" ] && [ ${TSI} = "n" ]
 then
 	#创建TeamSpeak3服务器文件目录
 	echo "将在/var文件夹下创建TeamSpeak3服务器文件目录......"
@@ -412,7 +412,7 @@ then
 	sudo docker compose -f /var/docker_file/compose_file/teamspeak3/docker-compose.yml up -d
 #部署docker-compose.yml--结束
 #部署FSD4.0 连飞服务器-结束
-elif [ $CCFSDI = "n" ] && [ $FSDI = "n" ] && [ $CCTSI = "n" ] && [ $TSI = "n" ]
+elif [ ${CCFSDI} = "n" ] && [ ${FSDI} = "n" ] && [ ${CCTSI} = "n" ] && [ ${TSI} = "n" ]
 then
 	echo -e "\033[31m终止部署（安装）FSD4.0 连飞服务器和Teamspeak3服务器，本脚本即将退出...... \033[0m" && exit 0
 fi
