@@ -69,7 +69,7 @@ else
 	do
 		echo -e -n "\033[33m监测到服务器未安装Docker，是否安装？[y/n] \033[0m"
 		read -p "" UCDI
-		case $UCDI in 
+		case ${UCDI} in 
 			[yY])
 				export CCDI="y"
 				break
@@ -87,7 +87,7 @@ fi
 #验证服务器是否安装Docker-结束
 
 #Docker自动安装
-if [ $CCDI = "y" ] && [ $DI = "n" ] && [ $SYSTEM = "dnf" ]
+if [ ${CCDI} = "y" ] && [ ${DI} = "n" ] && [ ${SYSTEM} = "dnf" ]
 then
 	tput clear
 	echo "安装Docker中......"
@@ -128,7 +128,7 @@ then
 	export DI="y"
 	echo "......Docker安装完成"
 
-elif [ $CCDI = "y" ] && [ $DI = "n" ] && [ $SYSTEM = "apt" ]
+elif [ ${CCDI} = "y" ] && [ ${DI} = "n" ] && [ ${SYSTEM} = "apt" ]
 then
 	tput clear
 	echo "安装Docker中......"
@@ -136,12 +136,12 @@ then
 	
 	tput cup 1 0
 	echo "[------------------------------] 0%"
-	sudo apt-get update > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get update > /dev/null
 	check_install
 	tput cup 1 0
 	
 	echo "[====--------------------------] 14%"
-	sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common > /dev/null
 	check_install
 	tput cup 1 0
 	
@@ -167,12 +167,12 @@ then
 	tput cup 1 0
 	
 	echo "[=====================---------] 71%"
-	sudo apt-get update > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get update > /dev/null
 	check_install
 	tput cup 1 0
 	
 	echo "[==========================----] 86%"
-	sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null
 	check_install
 	tput cup 1 0
 	
@@ -192,7 +192,7 @@ then
 	export DI="y"
 	echo "......Docker安装完成"
 
-elif [ $CCDI = "n" ] && [ $DI = "n" ]
+elif [ ${CCDI} = "n" ] && [ ${DI} = "n" ]
 then
 	echo -e "\033[31m终止安装Docker，本脚本即将退出...... \033[0m" && exit 0
 
@@ -214,7 +214,7 @@ else
 	do
 		echo -e -n "\033[33m监测到服务器未安装Docker Compose，是否安装？[y/n] \033[0m"
 		read -p "" UCDCI
-		case $UCDCI in 
+		case ${UCDCI} in 
 			[yY])
 				export CCDCI="y"
 				break
@@ -232,7 +232,7 @@ fi
 #验证服务器是否安装Docker Compose结束
 
 #Docker Compose自动安装
-if [ $CCDCI = "y" ] && [ $DI = "y" ] && [ $DCI = "n" ] && [ $SYSTEM = "dnf" ]
+if [ ${CCDCI} = "y" ] && [ ${DI} = "y" ] && [ ${DCI} = "n" ] && [ ${SYSTEM} = "dnf" ]
 then
 	tput clear
 	echo "安装Docker Compose中......"
@@ -259,7 +259,7 @@ then
 	sleep 0.5
 	echo "......Docker Compose安装完成"
 
-elif [ $CCDCI = "y" ] && [ $DI = "y" ] && [ $DCI = "n" ] && [ $SYSTEM = "apt" ]
+elif [ ${CCDCI} = "y" ] && [ ${DI} = "y" ] && [ ${DCI} = "n" ] && [ ${SYSTEM} = "apt" ]
 then
 	tput clear
 	echo "安装Docker Compose中......"
@@ -285,8 +285,9 @@ then
 	
 	sleep 0.5
 	echo "......Docker Compose安装完成"
+	sleep 1
 
-elif [ $CCDI = "n" ] && [ $DI = "n" ]
+elif [ ${CCDI} = "n" ] && [ ${DI} = "n" ]
 then
 	echo -e "\033[31m终止安装Docker Compose，本脚本即将退出...... \033[0m" && exit 0
 
@@ -297,6 +298,7 @@ fi
 sudo docker network ls | grep "wordpress_server_for_public" > /dev/null
 if [ $? -eq 0 ]
 then
+	tput clear
 	echo "检测到服务器已使用本脚本部署（安装）Wordpress应用，自动跳过部署（安装）......" 
 	export WPI="y"
 	sleep 1
@@ -305,7 +307,7 @@ else
 	do
 		echo -e -n "\033[33m监测到服务器未部署（安装）Wordpress应用，是否部署（安装）？[y/n] \033[0m"
 		read -p "" UCWPI
-		case $UCWPI in 
+		case ${UCWPI} in 
 			[yY])
 				export CCWPI="y"
 				break
@@ -323,7 +325,7 @@ fi
 #是否启动Wordpress应用部署-结束
 
 #启动Wordpress应用部署
-if [ $CCWPI = "y" ] && [ $WPI = "n" ]
+if [ ${CCWPI} = "y" ] && [ ${WPI} = "n" ]
 then
 	#创建网站项目文件夹
 	echo "将在/var文件夹下创建网站文件夹......"
@@ -361,13 +363,13 @@ then
 			echo "下载完成"
 			sleep 1
 			break
-		elif [ $? -ne 0 ] && [ $inumber -eq 5 ]
+		elif [ $? -ne 0 ] && [ ${inumber} -eq 5 ]
 		then
-			echo -e "\033[31m第$inumber次下载失败，终止下载，请检查网络连接再重新尝试。本脚本即将退出......\033[0m"
+			echo -e "\033[31m第${inumber}次下载失败，终止下载，请检查网络连接再重新尝试。本脚本即将退出......\033[0m"
 			exit 127
-		elif [ $? -ne 0 ] && [ $inumber -ne 5 ]
+		elif [ $? -ne 0 ] && [ ${inumber} -ne 5 ]
 		then
-			echo -e "\033[31m第$inumber次下载失败，尝试重新下载......\033[0m"
+			echo -e "\033[31m第${inumber}次下载失败，尝试重新下载......\033[0m"
 			sleep 1
 			tput clear
 		fi
@@ -402,32 +404,55 @@ then
 	#修改Nginx配置文件-获取信息
 	echo -e -n "\033[33m请输入你的域名（比如example.com，不用输入http或https）： \033[0m"
 	read -p "" hostname
-	echo -e -n "\033[33m请输入Wordpress网站文件最大上传大小（单位：MB，结尾请输入M。如30M）： \033[0m"
-	read -p "" uploadmaxmium
+	#检测是否含有其他文本
+	while true
+	do
+		echo -e -n "\033[33m请输入Wordpress网站文件最大上传大小（单位：MB，仅输入数字。如30）： \033[0m"
+		read -p "" uploadmaxmium
+		echo ${uploadmaxmium} | grep -E "^[0-9]+$"
+		case $? in
+			0)
+				break
+				;;
+			*)
+				echo "输入有误，请重新输入"
+				;;
+		esac
+	done
 	#修改Nginx配置文件-绑定域名
-	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress.conf
-	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
+	sudo sed -i "s/domain_name/${hostname}/" /var/docker_file/container/nginx_website/config/wordpress.conf
+	sudo sed -i "s/domain_name/${hostname}/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
 	#修改Nginx配置文件-上传文件限制
-	sudo sed -i "s/uploadmaxmium/$uploadmaxmium/" /var/docker_file/container/nginx_website/config/wordpress.conf
-	sudo sed -i "s/uploadmaxmium/$uploadmaxmium/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
+	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}M/" /var/docker_file/container/nginx_website/config/wordpress.conf
+	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}M/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
 	#修改docker-compose.yml文件-获取信息
-	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（数据库超级管理员）密码： \033[0m"
+	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（数据库超级管理员）密码（留空自动设置）： \033[0m"
 	read -p "" -s rootpasswd
+	if [ ${rootpasswd} = "" ]
+	then
+		export rootpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+="' < /dev/urandom | head -c30)
+		echo "你的数据库Root用户密码为：${rootpasswd}，请牢记此密码！"
+	fi
 	echo " "
-	echo -e -n "\033[33m请输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码： \033[0m"
+	echo -e -n "\033[33m请输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码（留空自动设置）： \033[0m"
 	read -p "" -s wordpressdbpasswd
+	if [ ${wordpressdbpasswd} = "" ]
+	then
+		export wordpressdbpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+="' < /dev/urandom | head -c30)
+		echo "你的数据库Wordpress用户密码为：${wordpressdbpasswd}，请牢记此密码！"
+	fi
 	echo " "
 	sleep 1
 	tput clear
 	echo -e "\033[33m我们正在设置Docker Compose和MariaDB数据库，请等待……（这可能需要较长时间）\033[0m"
 	sleep 1
 	#修改docker-compose.yml文件
-	sudo sed -i "s/domain_name/$hostname/" /var/docker_file/compose_file/wordpress/docker-compose.yml
-	sudo sed -i "s/ROOT_PASSWD/$rootpasswd/" /var/docker_file/compose_file/wordpress/docker-compose.yml
+	sudo sed -i "s/domain_name/${hostname}/" /var/docker_file/compose_file/wordpress/docker-compose.yml
+	sudo sed -i "s/ROOT_PASSWD/${rootpasswd}/" /var/docker_file/compose_file/wordpress/docker-compose.yml
 	#修改init.sql文件
-	sudo sed -i "s/WORDPRESS_PASSWD/$wordpressdbpasswd/" /var/docker_file/container/mariadb_website/init.d/wordpress/init.sql
+	sudo sed -i "s/WORDPRESS_PASSWD/${wordpressdbpasswd}/" /var/docker_file/container/mariadb_website/init.d/wordpress/init.sql
 	#更改Wordpress配置文件
-	sudo sed -i "s/WORDPRESS_PASSWD/$wordpressdbpasswd/" /var/docker_file/container/nginx_website/website_file/wordpress/wp-config.php
+	sudo sed -i "s/WORDPRESS_PASSWD/${wordpressdbpasswd}/" /var/docker_file/container/nginx_website/website_file/wordpress/wp-config.php
 	sudo curl https://api.wordpress.org/secret-key/1.1/salt/ > /var/docker_file/tmp/KEYS_AND_SALTS
 	sudo sed -i "52 r /var/docker_file/tmp/KEYS_AND_SALTS" /var/docker_file/container/nginx_website/website_file/wordpress/wp-config.php
 	#更改Wordpress配置文件-结束
@@ -436,7 +461,7 @@ then
 	sudo docker compose -f /var/docker_file/compose_file/wordpress/docker-compose.yml up -d
 	#下载默认php.ini文件 && 修改php.ini配置文件-上传文件限制
 	sudo curl https://ftp.esaps.top:8080/dockersh/wordpress-project/php.ini > /var/docker_file/container/php_website/config/php.ini
-	sudo sed -i "s/uploadmaxmium/$uploadmaxmium/" /var/docker_file/container/php_website/config/php.ini
+	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}/" /var/docker_file/container/php_website/config/php.ini
 	#php-fpm插件安装
 	sleep 1
 	echo -e "\033[33m请设置接下来安装PHP扩展时使用的镜像源\033[0m"
@@ -446,7 +471,7 @@ then
 	do
 		echo -e -n "\033[33m请输入相对应镜像源数字编号： \033[0m"
 		read -p "" mirrornumber
-		case $mirrornumber in 
+		case ${mirrornumber} in 
 			[1])
 				break
 				;;
@@ -489,17 +514,16 @@ then
 	sudo rm -rf /var/docker_file/tmp/
 #部署docker-compose.yml-wordpress-结束
 
-elif [ $CCWPI = "n" ] && [ $WPI = "n" ]
+elif [ ${CCWPI} = "n" ] && [ ${WPI} = "n" ]
 then
 	echo -e "\033[31m终止部署（安装）Wordpress应用，本脚本即将退出...... \033[0m" && exit 0
 fi
 
 
 #结束
-echo -e "\033[33m请试着在浏览器里输入你的网址：$hostname 来访问你的网站喵~ \033[0m"
+echo -e "\033[33m请试着在浏览器里输入你的网址：${hostname} 来访问你的网站喵~ \033[0m"
 sleep 1
 echo -e "\033[36m无事可做（Nothing To Do.） \033[0m"
 sleep 1
 echo -e "\033[36m完成！（Complete!） \033[0m"
 #结束-结束
-

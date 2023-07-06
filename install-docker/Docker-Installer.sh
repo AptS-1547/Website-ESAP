@@ -26,9 +26,10 @@ export DCI="n"
 export UCWPI="n"
 export CCWPI="n"
 export WPI="n"
-SYSTEM="none"
+export SYSTEM="none"
 
 #版权信息
+tput clear
 echo -e "\033[36mDocker自动安装脚本"
 echo -e "Author: AptS-1547"
 echo -e "Description: 懒人化自动安装Docker脚本（支持OpencloudOS等官方不支持系统，不支持Fedora） \033[0m"
@@ -68,7 +69,7 @@ else
 	do
 		echo -e -n "\033[33m监测到服务器未安装Docker，是否安装？[y/n] \033[0m"
 		read -p "" UCDI
-		case $UCDI in 
+		case ${UCDI} in 
 			[yY])
 				export CCDI="y"
 				break
@@ -86,7 +87,7 @@ fi
 #验证服务器是否安装Docker-结束
 
 #Docker自动安装
-if [ $CCDI = "y" ] && [ $DI = "n" ] && [ $SYSTEM = "dnf" ]
+if [ ${CCDI} = "y" ] && [ ${DI} = "n" ] && [ ${SYSTEM} = "dnf" ]
 then
 	tput clear
 	echo "安装Docker中......"
@@ -127,7 +128,7 @@ then
 	export DI="y"
 	echo "......Docker安装完成"
 
-elif [ $CCDI = "y" ] && [ $DI = "n" ] && [ $SYSTEM = "apt" ]
+elif [ ${CCDI} = "y" ] && [ ${DI} = "n" ] && [ ${SYSTEM} = "apt" ]
 then
 	tput clear
 	echo "安装Docker中......"
@@ -135,12 +136,12 @@ then
 	
 	tput cup 1 0
 	echo "[------------------------------] 0%"
-	sudo apt-get update > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get update > /dev/null
 	check_install
 	tput cup 1 0
 	
 	echo "[====--------------------------] 14%"
-	sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common > /dev/null
 	check_install
 	tput cup 1 0
 	
@@ -166,12 +167,12 @@ then
 	tput cup 1 0
 	
 	echo "[=====================---------] 71%"
-	sudo apt-get update > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get update > /dev/null
 	check_install
 	tput cup 1 0
 	
 	echo "[==========================----] 86%"
-	sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null
 	check_install
 	tput cup 1 0
 	
@@ -191,7 +192,7 @@ then
 	export DI="y"
 	echo "......Docker安装完成"
 
-elif [ $CCDI = "n" ] && [ $DI = "n" ]
+elif [ ${CCDI} = "n" ] && [ ${DI} = "n" ]
 then
 	echo -e "\033[31m终止安装Docker，本脚本即将退出...... \033[0m" && exit 0
 
@@ -213,7 +214,7 @@ else
 	do
 		echo -e -n "\033[33m监测到服务器未安装Docker Compose，是否安装？[y/n] \033[0m"
 		read -p "" UCDCI
-		case $UCDCI in 
+		case ${UCDCI} in 
 			[yY])
 				export CCDCI="y"
 				break
@@ -231,7 +232,7 @@ fi
 #验证服务器是否安装Docker Compose结束
 
 #Docker Compose自动安装
-if [ $CCDCI = "y" ] && [ $DI = "y" ] && [ $DCI = "n" ] && [ $SYSTEM = "dnf" ]
+if [ ${CCDCI} = "y" ] && [ ${DI} = "y" ] && [ ${DCI} = "n" ] && [ ${SYSTEM} = "dnf" ]
 then
 	tput clear
 	echo "安装Docker Compose中......"
@@ -258,7 +259,7 @@ then
 	sleep 0.5
 	echo "......Docker Compose安装完成"
 
-elif [ $CCDCI = "y" ] && [ $DI = "y" ] && [ $DCI = "n" ] && [ $SYSTEM = "apt" ]
+elif [ ${CCDCI} = "y" ] && [ ${DI} = "y" ] && [ ${DCI} = "n" ] && [ ${SYSTEM} = "apt" ]
 then
 	tput clear
 	echo "安装Docker Compose中......"
@@ -284,8 +285,9 @@ then
 	
 	sleep 0.5
 	echo "......Docker Compose安装完成"
+	sleep 1
 
-elif [ $CCDI = "n" ] && [ $DI = "n" ]
+elif [ ${CCDI} = "n" ] && [ ${DI} = "n" ]
 then
 	echo -e "\033[31m终止安装Docker Compose，本脚本即将退出...... \033[0m" && exit 0
 
