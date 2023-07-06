@@ -1,5 +1,4 @@
 # Wordpress非官方安装脚本
-**此脚本已初步完成，接下来将会进行故障（错误输入）处理编写**
 自动安装*Wordpress*应用脚本，依赖于*Docker Compose*  
 支持已安装Docker的Linux系统  
 如果未安装Docker，此脚本也会尝试安装支持官方脚本不支持的部分系统（OpencloudOS，TencentOS等RHEL系Linux发行版，Debian部分发行版，不支持Fedora）  

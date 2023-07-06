@@ -28,6 +28,9 @@ export CCWPI="n"
 export WPI="n"
 SYSTEM="none"
 
+export rootpasswd=""
+export wordpressdbpasswd=""
+
 #版权信息
 tput clear
 echo -e "\033[36m自动安装脚本"
@@ -409,7 +412,7 @@ then
 	do
 		echo -e -n "\033[33m请输入Wordpress网站文件最大上传大小（单位：MB，仅输入数字。如30）： \033[0m"
 		read -p "" uploadmaxmium
-		echo ${uploadmaxmium} | grep -E "^[0-9]+$"
+		echo ${uploadmaxmium} | grep -E "^[0-9]+$" > /dev/null
 		case $? in
 			0)
 				break
@@ -428,18 +431,21 @@ then
 	#修改docker-compose.yml文件-获取信息
 	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（数据库超级管理员）密码（留空自动设置）： \033[0m"
 	read -p "" -s rootpasswd
-	if [ ${rootpasswd} = "" ]
+	echo ""
+	if [[ ${rootpasswd} = "" ]]
 	then
 		export rootpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+="' < /dev/urandom | head -c30)
 		echo "你的数据库Root用户密码为：${rootpasswd}，请牢记此密码！"
 	fi
 	echo " "
+
 	echo -e -n "\033[33m请输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码（留空自动设置）： \033[0m"
 	read -p "" -s wordpressdbpasswd
-	if [ ${wordpressdbpasswd} = "" ]
+	echo ""
+	if [[ ${wordpressdbpasswd} = "" ]]
 	then
 		export wordpressdbpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+="' < /dev/urandom | head -c30)
-		echo "你的数据库Wordpress用户密码为：${wordpressdbpasswd}，请牢记此密码！"
+		echo "你的数据库Wordpress用户密码为：${wordpressdbpasswd}。"
 	fi
 	echo " "
 	sleep 1
