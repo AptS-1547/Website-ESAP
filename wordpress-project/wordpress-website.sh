@@ -136,12 +136,12 @@ then
 	
 	tput cup 1 0
 	echo "[------------------------------] 0%"
-	sudo apt-get update > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get update > /dev/null
 	check_install
 	tput cup 1 0
 	
 	echo "[====--------------------------] 14%"
-	sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common > /dev/null
 	check_install
 	tput cup 1 0
 	
@@ -167,12 +167,12 @@ then
 	tput cup 1 0
 	
 	echo "[=====================---------] 71%"
-	sudo apt-get update > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get update > /dev/null
 	check_install
 	tput cup 1 0
 	
 	echo "[==========================----] 86%"
-	sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null
 	check_install
 	tput cup 1 0
 	
@@ -401,7 +401,7 @@ then
 	echo -e "\033[33m下载完成！\033[0m"
 	sleep 1
 	tput clear
-	#修改Nginx配置文件-获取信息
+	#修改Nginx配置文件-获取信息 TODO:做设置uploadmaxium仅使用数字
 	echo -e -n "\033[33m请输入你的域名（比如example.com，不用输入http或https）： \033[0m"
 	read -p "" hostname
 	echo -e -n "\033[33m请输入Wordpress网站文件最大上传大小（单位：MB，结尾请输入M。如30M）： \033[0m"

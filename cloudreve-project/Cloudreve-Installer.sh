@@ -135,12 +135,12 @@ then
 	
 	tput cup 1 0
 	echo "[------------------------------] 0%"
-	sudo apt-get update > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get update > /dev/null
 	check_install
 	tput cup 1 0
 	
 	echo "[====--------------------------] 14%"
-	sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common > /dev/null
 	check_install
 	tput cup 1 0
 	
@@ -166,12 +166,12 @@ then
 	tput cup 1 0
 	
 	echo "[=====================---------] 71%"
-	sudo apt-get update > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get update > /dev/null
 	check_install
 	tput cup 1 0
 	
 	echo "[==========================----] 86%"
-	sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null
 	check_install
 	tput cup 1 0
 	
