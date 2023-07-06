@@ -423,8 +423,13 @@ then
 	sudo sed -i "s/domain_name/${hostname}/" /var/docker_file/container/nginx_website/config/wordpress.conf
 	sudo sed -i "s/domain_name/${hostname}/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
 	#修改Nginx配置文件-上传文件限制
+<<<<<<< HEAD
 	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}M/" /var/docker_file/container/nginx_website/config/wordpress.conf
 	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}M/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
+=======
+	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}/" /var/docker_file/container/nginx_website/config/wordpress.conf
+	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
+>>>>>>> 2175b9a6f041f9c7739233b65de6604558de865e
 	#修改docker-compose.yml文件-获取信息
 	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（数据库超级管理员）密码（留空自动设置）： \033[0m"
 	read -p "" -s rootpasswd
