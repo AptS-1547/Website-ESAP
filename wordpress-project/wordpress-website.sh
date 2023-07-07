@@ -461,7 +461,7 @@ then
 			read -p "" -s anorootpasswd
 			if [[ ${rootpasswd} = ${anorootpasswd} ]]
 			then
-				echo -e "033[32mMariaDB Root用户（数据库超级管理员）密码已设置！\033[0m"
+				echo -e "\033[32mMariaDB Root用户（数据库超级管理员）密码已设置！\033[0m"
 				break
 			else
 				echo -e "\033[31m输入有误，请重新输入\033[0m"
@@ -487,16 +487,16 @@ then
 			read -p "" -s anowordpressdbpasswd
 			if [[ ${wordpressdbpasswd} = ${anowordpressdbpasswd} ]]
 			then
-				echo -e "033[32mMariaDB Wordpress用户（Wordpress数据库用户）密码已设置！\033[0m"
+				echo -e "\033[32mMariaDB Wordpress用户（Wordpress数据库用户）密码已设置！\033[0m"
 				break
 			else
 				echo -e "\033[31m输入有误，请重新输入\033[0m"
 				sleep 1
 			fi
 		fi
-		echo " "
-		sleep 3
 	done
+	echo " "
+	sleep 3
 
 	echo -e "\033[33m我们正在设置Docker Compose和MariaDB数据库，请等待……（这可能需要较长时间）\033[0m"
 	sleep 1
