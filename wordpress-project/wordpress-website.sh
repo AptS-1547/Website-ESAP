@@ -13,6 +13,21 @@ function check_install() {
 #用户Ctrl+C停止部署时输出
 trap 'onCtrlC' INT
 function onCtrlC () {
+	sudo rm -rf /var/docker_file/compose_file/wordpress/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/logs/nginx_website/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/logs/mariadb_website/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/logs/php_website/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/container/nginx_website/config/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/container/nginx_website/website_file/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/container/mariadb_website/init.d/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/container/mariadb_website/init.d/wordpress/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/container/mariadb_website/config/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/container/mariadb_website/database_backup/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/container/php_website/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/container/php_website/config/ > /dev/null 2>&1
+	sudo rm -rf /var/docker_file/tmp/
+	sudo docker stop nginx_website mariadb_website php-8.1.18-fpm-website
+	sudo docker rm -f nginx_website mariadb_website php-8.1.18-fpm-website
     echo -e '\033[31m用户停止部署，本脚本即将退出......\033[0m'
 	exit 130
 }
@@ -30,6 +45,8 @@ SYSTEM="none"
 
 export rootpasswd=""
 export wordpressdbpasswd=""
+export anorootpasswd=""
+export anowordpressdbpasswd=""
 
 #版权信息
 tput clear
@@ -82,7 +99,7 @@ else
 				break
 				;;
 			*)
-				echo "输入有误，请重新输入"
+				echo -e "\033[31m输入有误，请重新输入\033[0m"
 				;;
 		esac
 	done
@@ -227,7 +244,7 @@ else
 				break
 				;;
 			*)
-				echo "输入有误，请重新输入"
+				echo -e "\033[31m输入有误，请重新输入\033[0m"
 				;;
 		esac
 	done
@@ -320,7 +337,7 @@ else
 				break
 				;;
 			*)
-				echo "输入有误，请重新输入"
+				echo -e "\033[31m输入有误，请重新输入\033[0m"
 				;;
 		esac
 	done
@@ -429,27 +446,58 @@ then
 	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}M/" /var/docker_file/container/nginx_website/config/wordpress.conf
 	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}M/" /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
 	#修改docker-compose.yml文件-获取信息
-	echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（数据库超级管理员）密码（留空自动设置）： \033[0m"
-	read -p "" -s rootpasswd
-	echo ""
-	if [[ ${rootpasswd} = "" ]]
-	then
-		export rootpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+="' < /dev/urandom | head -c30)
-		echo "你的数据库Root用户密码为：${rootpasswd}，请牢记此密码！"
-	fi
+	while true
+	do
+		echo -e -n "\033[33m请输入即将设置的MariaDB Root用户（数据库超级管理员）密码（留空自动设置）： \033[0m"
+		read -p "" -s rootpasswd
+		echo ""
+		if [[ ${rootpasswd} = "" ]]
+		then
+			export rootpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+="' < /dev/urandom | head -c30)
+			echo -e "\033[31;42m你的数据库Root用户密码为：${rootpasswd}，请牢记此密码！\033[0m"
+			break
+		else
+			echo -e -n "\033[33m请再次输入即将设置的MariaDB Root用户（数据库超级管理员）密码： \033[0m"
+			read -p "" -s anorootpasswd
+			if [[ ${rootpasswd} = ${anorootpasswd} ]]
+			then
+				echo -e "033[32mMariaDB Root用户（数据库超级管理员）密码已设置！\033[0m"
+				break
+			else
+				echo -e "\033[31m输入有误，请重新输入\033[0m"
+				sleep 1
+			fi
+		fi
+	done
+	sleep 1
 	echo " "
 
-	echo -e -n "\033[33m请输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码（留空自动设置）： \033[0m"
-	read -p "" -s wordpressdbpasswd
-	echo ""
-	if [[ ${wordpressdbpasswd} = "" ]]
-	then
-		export wordpressdbpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+="' < /dev/urandom | head -c30)
-		echo "你的数据库Wordpress用户密码为：${wordpressdbpasswd}。"
-	fi
-	echo " "
-	sleep 1
-	tput clear
+	while true
+	do
+		echo -e -n "\033[33m请输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码（留空自动设置）： \033[0m"
+		read -p "" -s wordpressdbpasswd
+		echo ""
+		if [[ ${wordpressdbpasswd} = "" ]]
+		then
+			export wordpressdbpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+="' < /dev/urandom | head -c30)
+			echo -e "\033[31;42m你的数据库Wordpress用户密码为：${wordpressdbpasswd}。\033[0m"
+			break
+		else
+			echo -e -n "\033[33m请再次输入即将设置的MariaDB Wordpress用户（Wordpress数据库用户）密码： \033[0m"
+			read -p "" -s anowordpressdbpasswd
+			if [[ ${wordpressdbpasswd} = ${anowordpressdbpasswd} ]]
+			then
+				echo -e "033[32mMariaDB Wordpress用户（Wordpress数据库用户）密码已设置！\033[0m"
+				break
+			else
+				echo -e "\033[31m输入有误，请重新输入\033[0m"
+				sleep 1
+			fi
+		fi
+		echo " "
+		sleep 3
+	done
+
 	echo -e "\033[33m我们正在设置Docker Compose和MariaDB数据库，请等待……（这可能需要较长时间）\033[0m"
 	sleep 1
 	#修改docker-compose.yml文件
@@ -487,7 +535,7 @@ then
 				break
 				;;
 			*)
-				echo "输入有误，请重新输入"
+				echo -e "\033[31m输入有误，请重新输入\033[0m"
 				;;
 		esac
 	done
