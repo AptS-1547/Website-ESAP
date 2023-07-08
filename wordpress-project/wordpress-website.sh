@@ -453,7 +453,7 @@ then
 		echo ""
 		if [[ ${rootpasswd} = "" ]]
 		then
-			export rootpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+="' < /dev/urandom | head -c30)
+			export rootpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+=' < /dev/urandom | head -c30)
 			echo -e "\033[31;42m你的数据库Root用户密码为：${rootpasswd}，请牢记此密码！\033[0m"
 			break
 		else
@@ -479,7 +479,7 @@ then
 		echo ""
 		if [[ ${wordpressdbpasswd} = "" ]]
 		then
-			export wordpressdbpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+="' < /dev/urandom | head -c30)
+			export wordpressdbpasswd=$(tr -cd 'a-zA-Z0-9[]{}#%^*+=' < /dev/urandom | head -c30)
 			echo -e "\033[31;42m你的数据库Wordpress用户密码为：${wordpressdbpasswd}。\033[0m"
 			break
 		else
@@ -515,7 +515,7 @@ then
 	sudo docker compose -f /var/docker_file/compose_file/wordpress/docker-compose.yml up -d
 	#下载默认php.ini文件 && 修改php.ini配置文件-上传文件限制
 	sudo curl https://ftp.esaps.top:8080/dockersh/wordpress-project/php.ini > /var/docker_file/container/php_website/config/php.ini
-	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}/" /var/docker_file/container/php_website/config/php.ini
+	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}M/" /var/docker_file/container/php_website/config/php.ini
 	#php-fpm插件安装
 	sleep 1
 	echo -e "\033[33m请设置接下来安装PHP扩展时使用的镜像源\033[0m"
