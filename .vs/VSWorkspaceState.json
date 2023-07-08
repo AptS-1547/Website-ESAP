@@ -7,6 +7,6 @@
     "\\install-program-portal",
     "\\wordpress-project"
   ],
-  "SelectedNode": "\\wordpress-project\\docker-compose.yml",
+  "SelectedNode": "\\install-docker\\Docker-Installer.sh",
   "PreviewInSolutionExplorer": false
 }
