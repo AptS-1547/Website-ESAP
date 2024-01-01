@@ -166,7 +166,7 @@ then
 	tput cup 1 0
 	
 	echo "[========----------------------] 28%"
-	curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add - > /dev/null
+	curl -k -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add - > /dev/null
 	check_install
 	tput cup 1 0
 	
@@ -377,7 +377,7 @@ then
 	sleep 1
 	for inumber in 1 2 3 4 5
 	do
-		sudo wget -c https://cn.wordpress.org/latest-zh_CN.tar.gz -P /var/docker_file/tmp/
+		sudo wget --no-check-certificate -c https://cn.wordpress.org/latest-zh_CN.tar.gz -P /var/docker_file/tmp/
 		if [ $? -eq 0 ]
 		then
 			echo "下载完成"
@@ -409,14 +409,14 @@ then
 	#下载wp-config.php配置文件
 	echo "下载Wordpress配置文件中……"
 	sleep 1
-	sudo curl https://ftp.esaps.top:8080/dockersh/wordpress-project/wp-config.php > /var/docker_file/container/nginx_website/website_file/wordpress/wp-config.php
+	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/wp-config.php > /var/docker_file/container/nginx_website/website_file/wordpress/wp-config.php
 	#下载docker-compose.yml
-	sudo curl https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose.yml >  /var/docker_file/compose_file/wordpress/docker-compose.yml
+	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose.yml >  /var/docker_file/compose_file/wordpress/docker-compose.yml
 	#下载初始Nginx conf文件（包括nginx conf https）
-	sudo curl https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress.conf > /var/docker_file/container/nginx_website/config/wordpress.conf
-	sudo curl https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-https.conf.disabled > /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
+	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress.conf > /var/docker_file/container/nginx_website/config/wordpress.conf
+	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-https.conf.disabled > /var/docker_file/container/nginx_website/config/wordpress-https.conf.disabled
 	#下载初始SQL文件
-	sudo curl https://ftp.esaps.top:8080/dockersh/wordpress-project/init.sql > /var/docker_file/container/mariadb_website/init.d/wordpress/init.sql
+	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/init.sql > /var/docker_file/container/mariadb_website/init.d/wordpress/init.sql
 	sudo chmod -R 777 /var/docker_file/container/nginx_website/website_file/wordpress/
 	echo -e "\033[33m下载完成！\033[0m"
 	sleep 1
@@ -507,14 +507,14 @@ then
 	sudo sed -i "s/WORDPRESS_PASSWD/${wordpressdbpasswd}/" /var/docker_file/container/mariadb_website/init.d/wordpress/init.sql
 	#更改Wordpress配置文件
 	sudo sed -i "s/WORDPRESS_PASSWD/${wordpressdbpasswd}/" /var/docker_file/container/nginx_website/website_file/wordpress/wp-config.php
-	sudo curl https://api.wordpress.org/secret-key/1.1/salt/ > /var/docker_file/tmp/KEYS_AND_SALTS
+	sudo curl -k https://api.wordpress.org/secret-key/1.1/salt/ > /var/docker_file/tmp/KEYS_AND_SALTS
 	sudo sed -i "52 r /var/docker_file/tmp/KEYS_AND_SALTS" /var/docker_file/container/nginx_website/website_file/wordpress/wp-config.php
 	#更改Wordpress配置文件-结束
 	
 	#启动Docker Compose部署
 	sudo docker compose -f /var/docker_file/compose_file/wordpress/docker-compose.yml up -d
 	#下载默认php.ini文件 && 修改php.ini配置文件-上传文件限制
-	sudo curl https://ftp.esaps.top:8080/dockersh/wordpress-project/php.ini > /var/docker_file/container/php_website/config/php.ini
+	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/php.ini > /var/docker_file/container/php_website/config/php.ini
 	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}M/" /var/docker_file/container/php_website/config/php.ini
 	#php-fpm插件安装
 	sleep 1
@@ -530,7 +530,7 @@ then
 				break
 				;;
 			[2])
-				sudo wget -c https://ftp.esaps.top:8080/dockersh/wordpress-project/sources.list -P /var/docker_file/tmp/ > /dev/null
+				sudo wget --no-check-certificate -c https://ftp.esaps.top:8080/dockersh/wordpress-project/sources.list -P /var/docker_file/tmp/ > /dev/null
 				sudo docker cp /var/docker_file/tmp/sources.list php-8.1.18-fpm-website:/etc/apt/sources.list
 				break
 				;;
