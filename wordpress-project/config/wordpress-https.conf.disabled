@@ -1,0 +1,36 @@
+server {
+    listen 443 ssl http2;
+    server_name domain_name;
+    ssl_certificate /etc/nginx/conf.d/domain_name_nginx/domain_name_bundle.crt;
+    ssl_certificate_key /etc/nginx/conf.d/domain_name_nginx/domain_name.key;
+    ssl_session_timeout 5m;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:HIGH:!aNULL:!MD5:!RC4:!DHE;
+    ssl_prefer_server_ciphers on;
+
+    client_max_body_size uploadmaxmium;
+
+    access_log  /var/log/nginx/domain_name.access.log  main;
+
+    location / {
+        root /usr/share/nginx/html/wordpress;
+        index  index.php index.html index.htm;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass   php-8.1.18-fpm-website:9000;
+        fastcgi_index  index.php;
+        fastcgi_param  SCRIPT_FILENAME  /usr/share/nginx/html/wordpress/$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+
+    server {
+        listen 80;
+        server_name domain_name;
+        return 301 https://domain_name/$request_uri;
+    }
+
+    sub_filter 'https://secure.gravatar.com/' 'https://gravatar.loli.net/';
+    sub_filter_once off;
+    sub_filter_types *;
+}

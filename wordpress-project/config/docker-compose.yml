@@ -1,0 +1,65 @@
+version: '3.8'
+
+volumes:
+  nginx-website-file:
+    name: nginx-website-file
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./nginx_website/website_file
+  nginx-website-config:
+    name: nginx-website-config
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ./nginx_website/config
+
+services:
+  nginx-website:
+    container_name: nginx-website
+    image: nginx:1.24.0
+    restart: always
+    ports:
+      - 443:443
+      - 80:80
+    networks:
+      - server_for_public
+    environment:
+      NGINX_HOST: "domain_name"
+    volumes:
+      - nginx-website-file:/usr/share/nginx/html
+      - nginx-website-config:/etc/nginx/conf.d
+      - ./nginx_website/config/nginx.conf:/etc/nginx/nginx.conf:ro
+
+  mariadb-website:
+    container_name: mariadb-website
+    image: mariadb:10.11.6
+    restart: always
+    networks:
+      - server_for_public
+    environment:
+      MARIADB_ROOT_PASSWORD: "ROOT_PASSWD"
+    expose:
+      - "3306"
+    volumes:
+      - ./mariadb_website/init.d/wordpress/:/docker-entrypoint-initdb.d:ro
+      - ./mariadb_website/database_backup:/database_backup:ro
+
+  php-8.1.18-fpm-website:
+    container_name: php-8.1.27-fpm-website
+    image: php:8.1.27-fpm
+    restart: always
+    networks:
+      - server_for_public
+    expose:
+      - "9000"
+    volumes:
+      - nginx-website-file:/usr/share/nginx/html
+      - ./php_website/config/php.ini:/usr/local/etc/php/php.ini:ro
+
+networks:
+  server_for_public:
+    driver: bridge
+
