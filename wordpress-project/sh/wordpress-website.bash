@@ -41,6 +41,8 @@ export DCI="n"
 export UCWPI="n"
 export CCWPI="n"
 export WPI="n"
+export CCACME="n"
+export UCACME="n"
 export SYSTEM="none"
 
 export rootpasswd=""
@@ -348,7 +350,6 @@ fi
 if [ ${CCWPI} = "y" ] && [ ${WPI} = "n" ]
 then
 	#创建网站项目文件夹
-	#TODO:改变文件目录
 	echo "将在/var文件夹下创建网站文件夹......"
 	echo "路径：/var/docker_file/"
 	sleep 1
@@ -416,9 +417,44 @@ then
 	sleep 1
 	tput clear
 	#修改Nginx配置文件-获取信息
-	echo -e -n "\033[33m请输入你的域名（比如example.com，不用输入http或https）： \033[0m"
-	read -p "" hostname
-	#TODO：检测DNS，是否使用acme.sh来获取ssl证书
+	while true
+	do
+		echo -e -n "\033[33m请输入你的域名（比如example.com，不用输入http或https）： \033[0m"
+		read -p "" hostname
+		while true
+		do
+			echo -e -n "\033[33m是否启用acme.sh来为域名申请Let's Encrypt HTTPS证书？[y/n] \033[0m"
+			read -p "" UCACME
+			case ${UCWPI} in 
+				[yY])
+					echo "将会启用acme.sh来获取Let's Encrypt HTTPS证书\n"
+					export CCACME="y"
+					break
+					;;
+				[nN])
+					export CCACME="n"
+					break
+					;;
+				*)
+					echo -e "\033[31m输入有误，请重新输入\033[0m"
+					;;
+			esac
+		done
+		#检测DNS解析
+		echo -e "正在检测\033[33m${hostname}\033[0m是否已经添加DNS解析……"
+		ping -c 4 ${hostname} > /dev/null 2>&1
+		case $? in
+			0)
+				echo "\033[33m${hostname}\033[0m的DNS A纪录已经添加\n"
+				sleep 1
+				break
+				;;
+			*)
+				echo -e "\e[31m未找到${hostname}的DNS A纪录，请重新输入正确的域名或添加正确的DNS解析！\033[0m\n"
+				sleep 1
+				;;
+		esac
+	done
 	#检测是否含有其他文本
 	while true
 	do
@@ -557,6 +593,9 @@ then
 	sleep 1
 	sudo docker compose -f /var/docker_file/website/docker-compose.yml restart
 	sudo rm -rf /var/docker_file/tmp/
+	
+	#TODO：acme.sh申请证书
+	
 #部署docker-compose.yml-wordpress-结束
 
 elif [ ${CCWPI} = "n" ] && [ ${WPI} = "n" ]
