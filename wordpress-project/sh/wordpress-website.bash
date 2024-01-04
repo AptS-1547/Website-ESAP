@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #定义函数
+#TODO：写一个通用的apt和dnf安装函数
 function check_install() {
 	if [ $? -ne 0 ]
 	then
@@ -12,6 +13,7 @@ function check_install() {
 
 #用户Ctrl+C停止部署时输出
 trap 'onCtrlC' INT
+#TODO：Ctrlc退出脚本重写
 function onCtrlC () {
 	sudo rm -rf /var/docker_file/compose_file/wordpress/ > /dev/null 2>&1
 	sudo rm -rf /var/docker_file/logs/nginx_website/ > /dev/null 2>&1
@@ -117,23 +119,23 @@ then
 	
 	tput cup 1 0
 	echo "[------------------------------] 0%"
-	sudo dnf makecache > /dev/null
+	sudo dnf makecache > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
 	tput cup 1 0
 	echo "[------------------------------] 0%"
-	sudo dnf install -y yum-utils device-mapper-persistent-data lvm2 > /dev/null
+	sudo dnf install -y yum-utils device-mapper-persistent-data lvm2 > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
 	echo "[==========--------------------] 33%"
-	sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo > /dev/null
+	sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
 	echo "[====================----------] 66%"
-	sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null
+	sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin wget curl > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
@@ -158,22 +160,22 @@ then
 	
 	tput cup 1 0
 	echo "[------------------------------] 0%"
-	sudo NEEDRESTART_MODE=a apt-get update > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get update > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
-	echo "[====--------------------------] 14%"
-	sudo NEEDRESTART_MODE=a apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common > /dev/null
+	echo "[==----------------------------] 7%"
+	sudo NEEDRESTART_MODE=a apt-get install -y apt-transport-https ca-certificates curl wget gnupg-agent software-properties-common > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
 	echo "[========----------------------] 28%"
-	curl -k -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add - > /dev/null
+	curl -kfsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add - > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
 	echo "[=============-----------------] 43%"
-	sudo apt-key fingerprint 0EBFCD88 > /dev/null
+	sudo apt-key fingerprint 0EBFCD88 > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
@@ -181,9 +183,9 @@ then
 	grep "ubuntu" /etc/os-release
 	if [ $? -eq	0 ]
 	then
-		sudo add-apt-repository -y "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/ $(lsb_release -cs) stable" > /dev/null	
+		sudo add-apt-repository -y "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/ $(lsb_release -cs) stable" > /dev/null	2>&1
 	else
-		sudo add-apt-repository -y "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/debian/ $(lsb_release -cs) stable" > /dev/null
+		sudo add-apt-repository -y "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/debian/ $(lsb_release -cs) stable" > /dev/null 2>&1
 	fi
 	check_install
 	tput cup 1 0
@@ -194,17 +196,14 @@ then
 	tput cup 1 0
 	
 	echo "[==========================----] 86%"
-	sudo NEEDRESTART_MODE=a apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null
+	sudo NEEDRESTART_MODE=a apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
 	docker -v > /dev/null 2>&1
 	check_install
 	
-	sudo systemctl enable docker
-	check_install
-	sudo systemctl start docker
-	check_install
+	sudo systemctl enable --now docker
 	
 	tput clear
 	echo "安装Docker中......"
@@ -262,17 +261,17 @@ then
 
 	tput cup 1 0
 	echo "[------------------------------] 0%"
-	sudo dnf makecache > /dev/null
+	sudo dnf makecache > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
 	tput cup 1 0
 	echo "[===============---------------] 50%"
-	sudo dnf install -y docker-compose-plugin > /dev/null
+	sudo dnf install -y docker-compose-plugin > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
-	docker -v > /dev/null 2>&1
+	docker compose > /dev/null 2>&1
 	check_install
 	
 	tput clear
@@ -289,13 +288,13 @@ then
 	
 	tput cup 1 0
 	echo "[------------------------------] 0%"
-	sudo apt-get update > /dev/null
+	sudo apt-get update > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
 	tput cup 1 0
 	echo "[===============---------------] 50%"
-	sudo apt-get install -y docker-compose-plugin > /dev/null
+	sudo apt-get install -y docker-compose-plugin > /dev/null 2>&1
 	check_install
 	tput cup 1 0
 	
@@ -317,7 +316,7 @@ fi
 #Docker Compose自动安装-结束
 
 #是否启动Wordpress应用部署
-sudo docker network ls | grep "wordpress_server_for_public" > /dev/null
+sudo docker network ls | grep "website_server_for_public" > /dev/null
 if [ $? -eq 0 ]
 then
 	tput clear
@@ -404,14 +403,14 @@ then
 	#下载wp-config.php配置文件
 	echo "下载Wordpress配置文件中……"
 	sleep 1
-	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/wp-config.php > /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
+	sudo curl -sk https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/wp-config.php > /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
 	#下载docker-compose.yml
-	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/docker-compose.yml >  /var/docker_file/website/docker-compose.yml
+	sudo curl -sk https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/docker-compose.yml >  /var/docker_file/website/docker-compose.yml
 	#下载初始Nginx conf文件（包括nginx conf https）
-	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/wordpress.conf > /var/docker_file/website/nginx_website/config/wordpress.conf
-	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/wordpress-https.conf.disabled > /var/docker_file/website/nginx_website/config/wordpress-https.conf.disabled
+	sudo curl -sk https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/wordpress.conf > /var/docker_file/website/nginx_website/config/wordpress.conf
+	sudo curl -sk https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/wordpress-https.conf.disabled > /var/docker_file/website/nginx_website/config/wordpress-https.conf.disabled
 	#下载初始SQL文件
-	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/init.sql > /var/docker_file/website/mariadb_website/init.d/wordpress/init.sql
+	sudo curl -sk https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/init.sql > /var/docker_file/website/mariadb_website/init.d/wordpress/init.sql
 	sudo chmod -R 777 /var/docker_file/website/nginx_website/website_file/wordpress/
 	echo -e "\033[33m下载完成！\033[0m"
 	sleep 1
@@ -538,14 +537,14 @@ then
 	sudo sed -i "s/WORDPRESS_PASSWD/${wordpressdbpasswd}/" /var/docker_file/website/mariadb_website/init.d/init.sql
 	#更改Wordpress配置文件
 	sudo sed -i "s/WORDPRESS_PASSWD/${wordpressdbpasswd}/" /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
-	sudo curl -k https://api.wordpress.org/secret-key/1.1/salt/ > /var/docker_file/tmp/KEYS_AND_SALTS
+	sudo curl -sk https://api.wordpress.org/secret-key/1.1/salt/ > /var/docker_file/tmp/KEYS_AND_SALTS
 	sudo sed -i "52 r /var/docker_file/tmp/KEYS_AND_SALTS" /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
 	#更改Wordpress配置文件-结束
 	
 	#启动Docker Compose部署
 	sudo docker compose -f /var/docker_file/website/docker-compose.yml up -d
 	#下载默认php.ini文件 && 修改php.ini配置文件-上传文件限制
-	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/php.ini > /var/docker_file/website/php_website/config/php.ini
+	sudo curl -sk https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/php.ini > /var/docker_file/website/php_website/config/php.ini
 	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}M/" /var/docker_file/website/php_website/config/php.ini
 	#php-fpm插件安装
 	sleep 1
