@@ -14,7 +14,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: ./nginx_website/config
+      device: ./nginx_website/config/conf.d
 
 services:
   nginx-website:
@@ -44,8 +44,8 @@ services:
     expose:
       - "3306"
     volumes:
-      - ./mariadb_website/init.d/wordpress/:/docker-entrypoint-initdb.d:ro
-      - ./mariadb_website/database_backup:/database_backup:ro
+      - ./mariadb_website/init.d/:/docker-entrypoint-initdb.d:ro
+      - ./mariadb_website/database_backup/:/database_backup:ro
 
   php-8.1.18-fpm-website:
     container_name: php-8.1.27-fpm-website
