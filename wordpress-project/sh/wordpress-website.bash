@@ -403,14 +403,14 @@ then
 	#下载wp-config.php配置文件
 	echo "下载Wordpress配置文件中……"
 	sleep 1
-	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/wp-config.php > /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
+	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/wp-config.php > /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
 	#下载docker-compose.yml
-	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/docker-compose.yml >  /var/docker_file/website/docker-compose.yml
+	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/docker-compose.yml >  /var/docker_file/website/docker-compose.yml
 	#下载初始Nginx conf文件（包括nginx conf https）
-	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress.conf > /var/docker_file/website/nginx_website/config/wordpress.conf
-	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/wordpress-https.conf.disabled > /var/docker_file/website/nginx_website/config/wordpress-https.conf.disabled
+	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/wordpress.conf > /var/docker_file/website/nginx_website/config/wordpress.conf
+	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/wordpress-https.conf.disabled > /var/docker_file/website/nginx_website/config/wordpress-https.conf.disabled
 	#下载初始SQL文件
-	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/init.sql > /var/docker_file/website/mariadb_website/init.d/wordpress/init.sql
+	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/init.sql > /var/docker_file/website/mariadb_website/init.d/wordpress/init.sql
 	sudo chmod -R 777 /var/docker_file/website/nginx_website/website_file/wordpress/
 	echo -e "\033[33m下载完成！\033[0m"
 	sleep 1
@@ -509,7 +509,7 @@ then
 	#启动Docker Compose部署
 	sudo docker compose -f /var/docker_file/website/docker-compose.yml up -d
 	#下载默认php.ini文件 && 修改php.ini配置文件-上传文件限制
-	sudo curl -k https://ftp.esaps.top:8080/dockersh/wordpress-project/php.ini > /var/docker_file/website/php_website/config/php.ini
+	sudo curl -k https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/php.ini > /var/docker_file/website/php_website/config/php.ini
 	sudo sed -i "s/uploadmaxmium/${uploadmaxmium}M/" /var/docker_file/website/php_website/config/php.ini
 	#php-fpm插件安装
 	sleep 1
@@ -525,7 +525,7 @@ then
 				break
 				;;
 			[2])
-				sudo wget --no-check-certificate -c https://ftp.esaps.top:8080/dockersh/wordpress-project/sources.list -P /var/docker_file/tmp/ > /dev/null
+				sudo wget --no-check-certificate -c https://https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/sources.list -P /var/docker_file/tmp/ > /dev/null
 				sudo docker cp /var/docker_file/tmp/sources.list php-8.1.27-fpm-website:/etc/apt/sources.list
 				break
 				;;
