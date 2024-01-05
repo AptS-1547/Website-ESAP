@@ -48,90 +48,83 @@ function get_manager() {
 		#获取服务器包管理器信息-结束
 }
 
-function main() {
-	
-	setup_init
-	get_manager
-	
-	#Docker自动安装
-	tput clear
-	echo "安装Docker中......"
-	sleep 1
-	
-	if [ ${SYSTEM} = "dnf" ]
-	then
-		install_esap "[------------------------------] 0%" "sudo dnf makecache > /dev/null 2>&1"
-		install_esap "[------------------------------] 0%" "sudo dnf install -y yum-utils device-mapper-persistent-data lvm2 > /dev/null 2>&1"
-		install_esap "[==========--------------------] 33%" "sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo > /dev/null 2>&1"
-		install_esap "[====================----------] 66%" "sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null 2>&1"
-		
-		sudo systemctl enable --now docker
-		sudo docker ps > /dev/null 2>&1
-		check_install
-		echo -n "[==============================] 100%"
-		sleep 0.5
-		export DI="y"
-		echo "......Docker安装完成"
-	elif [ ${SYSTEM} = "apt" ]
-	then
-		install_esap "[------------------------------] 0%" "sudo NEEDRESTART_MODE=a apt-get update > /dev/null 2>&1"
-		install_esap "[==----------------------------] 7%" "sudo NEEDRESTART_MODE=a apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common > /dev/null 2>&1"
-		install_esap "[========----------------------] 28%" "curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add - > /dev/null 2>&1"
-		install_esap "[=============-----------------] 43%" "sudo apt-key fingerprint 0EBFCD88 > /dev/null 2>&1"
-		
-		echo "[=================-------------] 57%"
-		grep "ubuntu" /etc/os-release
-		if [ $? -eq	0 ]
-		then
-			sudo add-apt-repository -y "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/ $(lsb_release -cs) stable" > /dev/null	2>&1
-		else
-			sudo add-apt-repository -y "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/debian/ $(lsb_release -cs) stable" > /dev/null 2>&1
-		fi
-		check_install
-		tput cup 1 0
-		
-		install_esap "[=====================---------] 71%" "sudo NEEDRESTART_MODE=a apt-get update > /dev/null 2>&1"
-		install_esap "[==========================----] 86%" "sudo NEEDRESTART_MODE=a apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null 2>&1"
+setup_init
+get_manager
 
-		sudo systemctl enable --now docker
-		
-		check_install
-		echo -n "[==============================] 100%"
-		sleep 0.5
-		export DI="y"
-		echo "......Docker安装完成"
+#Docker自动安装
+tput clear
+echo "安装Docker中......"
+sleep 1
+
+if [ ${SYSTEM} = "dnf" ]
+then
+	install_esap "[------------------------------] 0%" "sudo dnf makecache > /dev/null 2>&1"
+	install_esap "[------------------------------] 0%" "sudo dnf install -y yum-utils device-mapper-persistent-data lvm2 > /dev/null 2>&1"
+	install_esap "[==========--------------------] 33%" "sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo > /dev/null 2>&1"
+	install_esap "[====================----------] 66%" "sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null 2>&1"
+
+	sudo systemctl enable --now docker
+	sudo docker ps > /dev/null 2>&1
+	check_install
+	echo -n "[==============================] 100%"
+	sleep 0.5
+	export DI="y"
+	echo "......Docker安装完成"
+elif [ ${SYSTEM} = "apt" ]
+then
+	install_esap "[------------------------------] 0%" "sudo NEEDRESTART_MODE=a apt-get update > /dev/null 2>&1"
+	install_esap "[==----------------------------] 7%" "sudo NEEDRESTART_MODE=a apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common > /dev/null 2>&1"
+	install_esap "[========----------------------] 28%" "curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add - > /dev/null 2>&1"
+	install_esap "[=============-----------------] 43%" "sudo apt-key fingerprint 0EBFCD88 > /dev/null 2>&1"
+	
+	echo "[=================-------------] 57%"
+	grep "ubuntu" /etc/os-release
+	if [ $? -eq	0 ]
+	then
+		sudo add-apt-repository -y "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/ $(lsb_release -cs) stable" > /dev/null	2>&1
+	else
+		sudo add-apt-repository -y "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/debian/ $(lsb_release -cs) stable" > /dev/null 2>&1
 	fi
-	#Docker自动安装-结束
-	
-	#Docker Compose自动安装
-	tput clear
-	echo "安装Docker Compose中......"
-	sleep 1
-	
-	if [ ${SYSTEM} = "dnf" ]
-	then
-	
-		install_esap "[------------------------------] 0%" "sudo dnf makecache > /dev/null 2>&1"
-		install_esap "[===============---------------] 50%" "sudo dnf install -y docker-compose-plugin > /dev/null 2>&1"
-		
-		docker compose > /dev/null 2>&1
-		check_install
-		echo -n "[==============================] 100%"
-		sleep 0.5
-		echo "......Docker Compose安装完成"
-	
-	elif [ ${SYSTEM} = "apt" ]
-	then
-		install_esap "[------------------------------] 0%" "sudo NEEDRESTART_MODE=a apt-get update > /dev/null 2>&1"
-		install_esap "[===============---------------] 50%" "sudo NEEDRESTART_MODE=a apt-get install -y docker-compose-plugin > /dev/null 2>&1"
-		
-		docker compose > /dev/null 2>&1
-		check_install
-		echo -n "[==============================] 100%"
-		sleep 0.5
-		echo "......Docker Compose安装完成"
-	#Docker Compose自动安装-结束
-	
-}
+	check_install
+	tput cup 1 0
 
-main
+	install_esap "[=====================---------] 71%" "sudo NEEDRESTART_MODE=a apt-get update > /dev/null 2>&1"
+	install_esap "[==========================----] 86%" "sudo NEEDRESTART_MODE=a apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin > /dev/null 2>&1"
+
+	sudo systemctl enable --now docker
+	check_install
+	echo -n "[==============================] 100%"
+	sleep 0.5
+	export DI="y"
+	echo "......Docker安装完成"
+fi
+#Docker自动安装-结束
+
+#Docker Compose自动安装
+tput clear
+echo "安装Docker Compose中......"
+sleep 1
+
+if [ ${SYSTEM} = "dnf" ]
+then
+
+	install_esap "[------------------------------] 0%" "sudo dnf makecache > /dev/null 2>&1"
+	install_esap "[===============---------------] 50%" "sudo dnf install -y docker-compose-plugin > /dev/null 2>&1"
+	
+	docker compose > /dev/null 2>&1
+	check_install
+	echo -n "[==============================] 100%"
+	sleep 0.5
+	echo "......Docker Compose安装完成"
+
+elif [ ${SYSTEM} = "apt" ]
+then
+	install_esap "[------------------------------] 0%" "sudo NEEDRESTART_MODE=a apt-get update > /dev/null 2>&1"
+	install_esap "[===============---------------] 50%" "sudo NEEDRESTART_MODE=a apt-get install -y docker-compose-plugin > /dev/null 2>&1"
+	
+	docker compose > /dev/null 2>&1
+	check_install
+	echo -n "[==============================] 100%"
+	sleep 0.5
+	echo "......Docker Compose安装完成"
+#Docker Compose自动安装-结束
