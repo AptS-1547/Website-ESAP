@@ -70,7 +70,7 @@ then
 	echo "......Docker安装完成"
 elif [ ${SYSTEM} = "apt" ]
 then
-	install_esap "" "0%" "sudo NEEDRESTART_MODE=a apt-get update"
+	install_esap "" "0" "sudo NEEDRESTART_MODE=a apt-get update"
 	install_esap "###" "7" "sudo NEEDRESTART_MODE=a apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common"
 	printf "progress:[%-40s]%d%%\r" "#################" "43"
 	
