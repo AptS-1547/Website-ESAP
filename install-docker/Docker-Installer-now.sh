@@ -31,20 +31,20 @@ function setup_init() {
 }
 
 function get_manager() {
-		#获取服务器包管理器信息
-		dnf --version > /dev/null 2>&1
+	#获取服务器包管理器信息
+	dnf --version > /dev/null 2>&1
 		
+	if [ $? -eq 0 ]
+	then export SYSTEM="dnf"
+	else
+		apt --version > /dev/null 2>&1
 		if [ $? -eq 0 ]
-		then export SYSTEM="dnf"
+		then 
+			export SYSTEM="apt"
 		else
-			apt --version > /dev/null 2>&1
-			if [ $? -eq 0 ]
-			then 
-				export SYSTEM="apt"
-			else
-				echo -e "\033[31m不支持此系统，可能将在以后支持。本脚本即将退出...... \033[0m" && exit 127
-			fi
+			echo -e "\033[31m不支持此系统，可能将在以后支持。本脚本即将退出...... \033[0m" && exit 127
 		fi
+	fi
 		#获取服务器包管理器信息-结束
 }
 
@@ -131,6 +131,7 @@ function main() {
 		sleep 0.5
 		echo "......Docker Compose安装完成"
 	#Docker Compose自动安装-结束
+	
 }
 
 main
