@@ -16,13 +16,6 @@ function check_install() {
 	fi
 }
 
-#用户Ctrl+C停止部署时输出
-trap 'onCtrlC' INT
-function onCtrlC () {
-    echo -e '\033[31m用户停止安装，本脚本即将退出......\033[0m'
-	exit 130
-}
-
 function setup_init() {
 	export SYSTEM="none"
 }
@@ -42,7 +35,14 @@ function get_manager() {
 			echo -e "\033[31m不支持此系统，可能将在以后支持。本脚本即将退出...... \033[0m" && exit 127
 		fi
 	fi
-		#获取服务器包管理器信息-结束
+	#获取服务器包管理器信息-结束
+}
+
+#用户Ctrl+C停止部署时输出
+trap 'onCtrlC' INT
+function onCtrlC () {
+    echo -e '\033[31m用户停止安装，本脚本即将退出......\033[0m'
+	exit 130
 }
 
 function main() {

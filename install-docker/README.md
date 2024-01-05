@@ -10,12 +10,12 @@
 
 使用**Github**官方源：
 ```shell
-sudo wget https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/install-docker/Docker-Installer.sh && sudo bash Docker-Installer.sh
-```  
+bash <(curl -fsL https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/install-docker/sh/Docker-Installer.sh)
+```
 
 使用**The ESAP Project**镜像源：
 ```shell
-sudo wget https://ftp.esaps.top:8080/dockersh/install-docker/Docker-Installer.sh && sudo bash Docker-Installer.sh
-```   
+bash <(curl -fskL https://ftp.esaps.top:8080/dockersh/install-docker/sh/Docker-Installer.sh)
+```  
 
 将此命令复制到*Linux Shell*中，即可自动安装Docker
