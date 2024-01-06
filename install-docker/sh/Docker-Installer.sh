@@ -18,6 +18,7 @@ function check_install() {
 
 function setup_init() {
 	export SYSTEM="none"
+	export SYSTEM_ID=$(. /etc/os-release && echo "$ID")
 }
 
 function get_manager() {
@@ -25,17 +26,30 @@ function get_manager() {
 	dnf --version > /dev/null 2>&1
 		
 	if [ $? -eq 0 ]
-	then export SYSTEM="dnf"
+	then
+		export SYSTEM="dnf"
+		if [ ${SYSTEM_ID} = "centos" ] || [ ${SYSTEM_ID} = "fedora" ] || [ ${SYSTEM_ID} = "rhel" ]
+		then
+			export SYSTEM_ID=$(. /etc/os-release && echo "$ID")
+		else
+			export SYSTEM_ID="centos-fake"
+		fi
 	else
 		apt --version > /dev/null 2>&1
 		if [ $? -eq 0 ]
-		then 
+		then
+			export SYSTEM_ID=$(. /etc/os-release && echo "$ID")
 			export SYSTEM="apt"
 		else
 			echo -e "\033[31m不支持此系统，可能将在以后支持。本脚本即将退出...... \033[0m" && exit 127
 		fi
 	fi
 	#获取服务器包管理器信息-结束
+}
+
+#检查服务器是否安装了Docker
+function is_docker_on() {
+	false
 }
 
 #用户Ctrl+C停止部署时输出
@@ -52,8 +66,14 @@ function main() {
 	
 	if [ ${SYSTEM} = "dnf" ]
 	then
-		install_esap "" "0" "sudo dnf makecache && sudo dnf install -y yum-utils device-mapper-persistent-data lvm2"
-		install_esap "#############" "33" "sudo yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo"
+		install_esap "" "0" "sudo dnf makecache && sudo dnf install -y yum-utils device-mapper-persistent-data lvm2 'dnf-command(config-manager)'"
+		if [ ${SYSTEM_ID} = "centos-fake"]
+			then
+				install_esap "#############" "33" "sudo dnf config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo"
+				sed -i 's/$releasever/8/g' /etc/yum.repos.d/docker-ce.repo
+			else
+				install_esap "#############" "33" "sudo dnf config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/${SYSTEM_ID}/docker-ce.repo"
+		fi
 		install_esap "##########################" "66" "sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin"
 	
 		sudo systemctl enable --now docker > /dev/null 2>&1
@@ -67,20 +87,11 @@ function main() {
 		install_esap "" "0" "sudo NEEDRESTART_MODE=a apt-get update"
 		install_esap "###" "7" "sudo NEEDRESTART_MODE=a apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common"
 		printf "progress:[%-40s]%d%%\r" "#################" "43"
-		
-		grep "ubuntu" /etc/os-release > /dev/null 2>&1
-		if [ $? -eq	0 ]
-		then
-			curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add - > /dev/null 2>&1
-			check_install
-			install_esap "#######################" "57" "sudo apt-key fingerprint 0EBFCD88"
-			sudo add-apt-repository -y "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/ $(lsb_release -cs) stable" > /dev/null	2>&1
-		else
-			curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/debian/gpg | sudo apt-key add - > /dev/null 2>&1
-			check_install
-			install_esap "#######################" "57" "sudo apt-key fingerprint 0EBFCD88"
-			sudo add-apt-repository -y "deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/debian/ $(lsb_release -cs) stable" > /dev/null 2>&1
-		fi
+		curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add - > /dev/null 2>&1
+		check_install
+		install_esap "#######################" "57" "sudo apt-key fingerprint 0EBFCD88"
+		#TODO：ARCH设置
+		sudo add-apt-repository -y "deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/${SYSTEM_ID}/ $(lsb_release -cs) stable" > /dev/null 2>&1
 		check_install
 	
 		install_esap "############################" "71" "sudo NEEDRESTART_MODE=a apt-get update"
