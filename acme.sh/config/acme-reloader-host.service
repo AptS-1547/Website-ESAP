@@ -1,0 +1,17 @@
+[Unit]
+Description=acme-reloader-host
+Documentation=https://esaps.top:8080/
+After=network-online.target docker.socket firewalld.service containerd.service time-set.target docker.socket
+
+[Service]
+WorkingDirectory=/var/docker_file/acme.sh
+ExecStart=bash /var/docker_file/acme.sh/acme-reloader-host.sh
+Restart=on-abnormal
+RestartSec=10s
+KillMode=mixed
+
+StandardOutput=null
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
