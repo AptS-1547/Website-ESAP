@@ -551,6 +551,9 @@ then
 	echo "正在安装PHP imagick扩展，请稍后……"
 	sudo docker exec -it php-8.1.27-fpm-website bash -c "yes '' | pecl install imagick" > /dev/null
 	sudo docker exec -it php-8.1.27-fpm-website docker-php-ext-install imagick > /dev/null
+ 	echo "正在进行安装后的清理，请稍后……"
+ 	sudo docker exec -it php-8.1.27-fpm-website apt autoremove -y > /dev/null
+ 	sudo docker exec -it php-8.1.27-fpm-website apt install -y libpng-dev zlib1g-dev libjpeg-dev liblzma-dev libfreetype-dev libxml2-dev fontconfig libzip-dev imagemagick > /dev/null
 	sudo sed -i "s/;extension=imagick.so/extension=imagick.so/" /var/docker_file/website/php_website/config/php.ini
 	#重启服务
 	echo "正在重启docker服务，请稍后……"
