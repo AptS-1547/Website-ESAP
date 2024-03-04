@@ -166,7 +166,6 @@ function main() {
 		#下载wp-config.php配置文件
 		echo "下载Wordpress配置文件中……"
 		sleep 1
-		sudo curl -sk https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/wp-config.php > /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
 		#下载docker-compose.yml
 		sudo curl -sk https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/docker-compose.yml >  /var/docker_file/website/docker-compose.yml
 		#下载初始Nginx conf文件（包括nginx conf https）
@@ -297,11 +296,16 @@ function main() {
 		sudo sed -i "s/domain_name/${hostname}/" /var/docker_file/website/docker-compose.yml
 		sudo sed -i "s/ROOT_PASSWD/${rootpasswd}/" /var/docker_file/website/docker-compose.yml
 		#修改init.sql文件
-		sudo sed -i "s/WORDPRESS_PASSWD/${wordpressdbpasswd}/" /var/docker_file/website/mariadb_website/init.d/init.sql
+		sudo sed -i "s/password_here/${wordpressdbpasswd}/" /var/docker_file/website/mariadb_website/init.d/init.sql
 		#更改Wordpress配置文件
-		sudo sed -i "s/WORDPRESS_PASSWD/${wordpressdbpasswd}/" /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
+		sudo cp /var/docker_file/website/nginx_website/website_file/wordpress/wp-config-sample.php /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
+		sudo sed -i "s/password_here/${wordpressdbpasswd}/" /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
+		sudo sed -i "s/database_name_here/wordpress/" /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
+		sudo sed -i "s/username_here/wordpress/" /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
+		sudo sed -i "s/localhost/mariadb-website/" /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
+		sudo sed -i "51,58d" /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
 		sudo curl -sk https://api.wordpress.org/secret-key/1.1/salt/ > /var/docker_file/tmp/KEYS_AND_SALTS
-		sudo sed -i "52 r /var/docker_file/tmp/KEYS_AND_SALTS" /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
+		sudo sed -i "51 r /var/docker_file/tmp/KEYS_AND_SALTS" /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
 		#更改Wordpress配置文件-结束
 		
 		#启动Docker Compose部署
