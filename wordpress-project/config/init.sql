@@ -1,3 +1,0 @@
-CREATE DATABASE IF NOT EXISTS wordpress;
-CREATE USER "wordpress"@"%" IDENTIFIED BY "WORDPRESS_PASSWD";
-GRANT ALL PRIVILEGES ON wordpress.* TO "wordpress"@"%";
