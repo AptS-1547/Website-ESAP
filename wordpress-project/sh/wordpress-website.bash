@@ -296,7 +296,9 @@ function main() {
 		sudo sed -i "s/domain_name/${hostname}/" /var/docker_file/website/docker-compose.yml
 		sudo sed -i "s/ROOT_PASSWD/${rootpasswd}/" /var/docker_file/website/docker-compose.yml
 		#修改init.sql文件
-		sudo sed -i "s/password_here/${wordpressdbpasswd}/" /var/docker_file/website/mariadb_website/init.d/init.sql
+		echo 'CREATE DATABASE IF NOT EXISTS wordpress;' >> /var/docker_file/website/mariadb_website/init.d/init.sql
+		echo "CREATE USER 'wordpress'@'%' IDENTIFIED BY '${wordpressdbpasswd}';" >> /var/docker_file/website/mariadb_website/init.d/init.sql
+		echo 'GRANT ALL PRIVILEGES ON wordpress.* TO "wordpress"@"%";' >> /var/docker_file/website/mariadb_website/init.d/init.sql
 		#更改Wordpress配置文件
 		sudo cp /var/docker_file/website/nginx_website/website_file/wordpress/wp-config-sample.php /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
 		sudo sed -i "s/password_here/${wordpressdbpasswd}/" /var/docker_file/website/nginx_website/website_file/wordpress/wp-config.php
@@ -327,8 +329,7 @@ function main() {
 					break
 					;;
 				[2])
-					sudo wget --no-check-certificate -c https://https://raw.githubusercontent.com/AptS-1547/Website-ESAP/master/wordpress-project/config/sources.list -P /var/docker_file/tmp/ > /dev/null
-					sudo docker cp /var/docker_file/tmp/sources.list php-8.1.27-fpm-website:/etc/apt/sources.list
+					sudo docker exec -it php-8.1.27-fpm-website sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 					break
 					;;
 				*)
